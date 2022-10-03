@@ -6,6 +6,8 @@
 | ----------------------------------------------------- |
 | [Integrantes do Grupo](#integrantes-do-grupo-id-4)    |
 | [Descrição do Projeto](#descrição-do-projeto)         |
+| [Instruções de Compilação e Execução](#instruções-de-compilação-e-execução)         |
+| [Documentação e Referências Utilizadas](#documentação-e-referências-utilizadas) |
 | [Observações para o Grupo](#observações-para-o-grupo) |
 
 ---
@@ -22,6 +24,8 @@
 ## Descrição do Projeto
 
 Projeto de Teoria dos Grafos (DCC059), desenvolvido em C++, com uso de CMake e Google Test.
+O objetivo inicial é desenvolver um TAD que represente grafos simples, orientados e não orientados, ponderados e não ponderados (nos vértices e arestas).
+
 
 [↑ Sumário](#sumário)
 
@@ -61,6 +65,7 @@ Para conseguir rodar o programa, é necessário ter instalados o [Git](https://g
 
 ## Documentação e Referências Utilizadas
 - [DevDocs para C++](https://devdocs.io/cpp/);
+- [Tutorial Graphviz](http://www.inf.ufes.br/~pdcosta/ensino/2018-2-estruturas-de-dados/material/Tutorial%20Graphviz.pdf);
 
 
 [↑ Sumário](#sumário)
