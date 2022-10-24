@@ -10,4 +10,3 @@ TEST(SwapTest, SwapIntegers)
   EXPECT_EQ(a, 2);
   EXPECT_EQ(b, 1);
 }
-
