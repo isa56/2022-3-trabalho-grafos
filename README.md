@@ -13,7 +13,7 @@
 ---
 
 ## Integrantes do Grupo (ID 4)
-- [Alice do Valle](https://github.com/alicedovalle);
+- [Eduardo Araujo](https://github.com/eduardonascimentojf);
 - [Isadora Ferreira](https://github.com/isa56);
 - [Miguel Sales](https://github.com/salesmiguelz).
 
@@ -58,7 +58,18 @@ Para conseguir rodar o programa, é necessário ter instalados o [Git](https://g
       ```bash
       ./build/test/nomeDoTeste
       ```
+3. Ou execute com o g++:
 
+    i. Gerar o arquivo executável  `.exe`:
+      ```bash
+      g++ -o execGrupo21.exe src/main.cpp src/Graph.cpp src/Node.cpp src/Edge.cpp
+      ```
+
+
+    ii. executar o arquivo `main`:
+      ```bash
+      ./execGrupo21.exe teste.txt testeS.txt 0 1 0
+      ```
 [↑ Sumário](#sumário)
 
 ---
