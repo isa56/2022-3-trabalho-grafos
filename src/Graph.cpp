@@ -1,6 +1,7 @@
 #include "./include/Graph.h"
 #include "./include/Metrics.h"
 #include <iostream>
+#include <vector>
 
 // Construtor
 Graph::Graph(int _order, bool _directed, bool _weightedEdge, bool _weightedNode)
@@ -52,33 +53,71 @@ Node *Graph::getLastNode()
 // Insere um Novo vertice
 void Graph::insertNode(int _id)
 {
-     // Crio o vertice
-     Node *NewNode = new Node(_id);
-     if (firstNode != nullptr) // Se tem vertice no grafo
+     Node *next;
+     Node *aux = nullptr;
+
+     // Verifica se já existe algum nó
+     if (this->getFirstNode() == nullptr)
      {
-          // Seta o ultimo vertice pro novo vertice e o novo se torna o ultimo vertice
-          lastNode->setNextNode(NewNode);
-          lastNode = NewNode;
+          this->firstNode = new Node(_id);
+          this->lastNode = this->getFirstNode();
      }
-     else // Se não tem vertice no grafo
+     else
      {
-          // Seta o vertice como o ultimo e o primeiro vertice
-          firstNode = NewNode;
-          lastNode = NewNode;
+          if (!this->searchNode(_id))
+          {
+               next = this->firstNode;
+               // Procura o último nó inserido
+               while (next != nullptr)
+               {
+                    aux = next;
+                    next = next->getNextNode();
+               }
+               // Inseri o nó na última posição
+               aux->setNextNode(new Node(_id));
+               this->lastNode = this->getNode(_id);
+          }
      }
-     order++;
+     // // Crio o vertice
+     // Node *NewNode = new Node(_id);
+     // if (firstNode != nullptr) // Se tem vertice no grafo
+     // {
+     //      // Seta o ultimo vertice pro novo vertice e o novo se torna o ultimo vertice
+     //      lastNode->setNextNode(NewNode);
+     //      lastNode = NewNode;
+     // }
+     // else // Se não tem vertice no grafo
+     // {
+     //      // Seta o vertice como o ultimo e o primeiro vertice
+     //      firstNode = NewNode;
+     //      lastNode = NewNode;
+     // }
 }
 void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
 {
-     insertNode(_id);
-     insertNode(_targetId);
+     // Se o Mó existe eu so adiciono a aresta
+     if (!this->searchNode(_id))
+     {
+          this->insertNode(_id);
+     }
+     if (!this->searchNode(_targetId))
+     {
+          this->insertNode(_targetId);
+     }
 
      // Insiro aresta do nó id-targetId
-     getNode(_id)->addEdge(_targetId, +weightedEdge);
-
-     if (!this->directed)
+     Node *nodeId = this->getNode(_id);
+     Node *nodeTargetId = this->getNode(_targetId);
+     if (this->getDirected())
      {
-          getNode(_targetId)->addEdge(_id, _weightEdge);
+          nodeId->addEdge(_targetId, _weightEdge);
+          nodeId->incrementOutDegree();
+          nodeTargetId->incrementInDegree();
+     }
+     else
+     {
+          nodeId->addEdge(_targetId, _weightEdge);
+          nodeTargetId->addEdge(_id, _weightEdge);
      }
 
      this->numberEdges++;
@@ -148,6 +187,7 @@ void Graph::printList()
      cout << "Peso no vertice: " << this->getWeightedNode() << endl;
 
      Node *aux = this->getFirstNode();
+     Edge *edge;
      if (aux != nullptr)
      {
           // Teste de tempo
@@ -155,23 +195,21 @@ void Graph::printList()
           Setup_metrics(&p);
           auto t0 = std::chrono::high_resolution_clock::now();
 
-          // for (size_t i = 0; i < this->getNumberEdges(); i++)
-          // {
-          cout << aux->getId() << " Aponta para os seguintes vertices -> ";
-          // while (aux->getNextNode() != nullptr)
-          // {
-          int i = 0;
-          while (i <= 16)
+          while (aux != nullptr)
           {
-               cout << aux->getId() << " - ";
+               edge = aux->getFirstEdge();
+               cout << aux->getId() << " => ";
+               while (edge != nullptr)
+               {
+                    cout << edge->getId() << " - ";
+                    edge = edge->getNextEdge();
+               }
+               cout << "null" << endl;
                aux = aux->getNextNode();
-               i++;
           }
 
-          // aux->setNextNode(aux->getNextNode());
-          // }
           cout << endl;
-          // }
+
           // Teste de tempo
           auto t1 = std::chrono::high_resolution_clock::now();
           std::chrono::duration<double> delta = t1 - t0;
@@ -194,4 +232,31 @@ Graph::~Graph()
           delete nextNode;
           nextNode = auxNode;
      }
+}
+
+void Graph::graphIntersection(Graph *G1, Graph *G2)
+{
+     vector<int> NodeIntersection;
+     Node *NodeG1 = G1->getFirstNode();
+     while (NodeG1 != nullptr)
+     {
+          Node *NodeG2 = G2->getFirstNode();
+          while (NodeG2 != nullptr)
+          {
+               if (NodeG1->getId() == NodeG2->getId())
+               {
+                    NodeIntersection.push_back(NodeG1->getId());
+                    cout << "iguais " << NodeG1->getId() << " ";
+               }
+               NodeG2 = NodeG2->getNextNode();
+          }
+
+          NodeG1 = NodeG1->getNextNode();
+     }
+
+     if (G1->getNode(2)->searchEdge(3))
+     {
+          cout << "Aresta é " << G1->getNode(2)->getFirstEdge()->getWeightEdge() << endl;
+     }
+     cout << endl;
 }

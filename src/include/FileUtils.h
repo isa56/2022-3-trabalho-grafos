@@ -73,93 +73,6 @@ Graph *readFile(ifstream &input_file, int directed, int weightedEdge, int weight
      return graph;
 }
 
-Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, int weightedNode)
-{
-
-     // Variáveis para auxiliar na criação dos nós no Grafo
-     int idNodeSource;
-     int idNodeTarget;
-     int order;
-     int numEdges;
-
-     // Pegando a ordem do grafo
-     input_file >> order >> numEdges;
-
-     // Criando objeto grafo
-     Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
-
-     // adciona todos os indicies
-     for (int i = 0; i < order; i++)
-     {
-          graph->insertNode(i + 1);
-     }
-
-     // Leitura de arquivo
-     while (input_file >> idNodeSource >> idNodeTarget)
-     {
-
-          graph->insertEdge(idNodeSource, idNodeTarget, 0);
-     }
-
-     return graph;
-}
-
-// string readFile(string filename, string fileExt)
-// {
-//      ifstream inFile;
-//      string line, value, fileContent = "";
-
-//      inFile.open(filename + fileExt, ios::in);
-
-//      if (!inFile.is_open())
-//      {
-//           cout << "Error opening file: " << filename << fileExt << endl;
-//           return value;
-//      }
-
-//      while (!inFile.eof())
-//      {
-//           getline(inFile, line);
-//           istringstream iss(line); // separa os valores da linha
-//                                    // lida com os valores:
-//           while (iss >> value)
-//           {
-//                fileContent += value;
-//           }
-//      }
-
-//      inFile.close();
-
-//      return fileContent;
-// }
-
-// void writeFile(string filename, string content, string fileExt)
-// {
-//      ofstream outFile;
-
-//      outFile.open(filename + fileExt, ios::out);
-
-//      if (!outFile.is_open())
-//      {
-//           cout << "Error opening file: " << filename << fileExt << endl;
-//           return;
-//      }
-
-//      if (fileExt.compare(".dot") == 0)
-//      {
-//           // formatDotFile(content);
-//           cout << "foratDoFile" << endl;
-//      }
-
-//      outFile.write(content.c_str(), content.length());
-
-//      outFile.close();
-// }
-
-// string formatDotFile(string content)
-// {
-// }
-
 char menu()
 {
      char selection;
@@ -180,7 +93,7 @@ char menu()
      return toupper(selection);
 }
 
-void selecionar(char selection, Graph *graph, ofstream &output_file)
+void selecionar(char selection, Graph *graphG1, ofstream &output_file)
 {
 
      switch (selection)
@@ -189,6 +102,12 @@ void selecionar(char selection, Graph *graph, ofstream &output_file)
      {
 
           cout << "(A) - Grafo Interseção" << endl;
+          Graph *graphIntersection, *graphG2;
+
+          ifstream input_file;
+          input_file.open("testeasa.txt", ios::in);
+          graphG2 = readFile(input_file, graphG1->getDirected(), graphG1->getWeightedEdge(), graphG1->getWeightedNode());
+          graphIntersection->graphIntersection(graphG1, graphG2);
           break;
      }
      case 'B': // Grafo União

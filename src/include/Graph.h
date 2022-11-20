@@ -41,7 +41,6 @@ public:
      Node *getLastNode();
      Node *getNode(int id);
      Node *getNodePosition(int position); // Pega um node apartir de sua posição de inserção
-     Graph *getVertInduz();
 
      // Other methods
      void insertNode(int id);
@@ -50,6 +49,8 @@ public:
      bool searchNode(int id);
 
      void printList();
+
+     void graphIntersection(Graph *G1, Graph *G2);
 };
 
 #endif // __GRAPH_H__
