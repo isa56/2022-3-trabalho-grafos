@@ -2,13 +2,13 @@
 
 ## Sumário
 
-| Tópico                                                |
-| ----------------------------------------------------- |
-| [Integrantes do Grupo](#integrantes-do-grupo-id-4)    |
-| [Descrição do Projeto](#descrição-do-projeto)         |
-| [Instruções de Compilação e Execução](#instruções-de-compilação-e-execução)         |
+| Tópico                                                                          |
+| ------------------------------------------------------------------------------- |
+| [Integrantes do Grupo](#integrantes-do-grupo-id-4)                              |
+| [Descrição do Projeto](#descrição-do-projeto)                                   |
+| [Instruções de Compilação e Execução](#instruções-de-compilação-e-execução)     |
 | [Documentação e Referências Utilizadas](#documentação-e-referências-utilizadas) |
-| [Observações para o Grupo](#observações-para-o-grupo) |
+| [Observações para o Grupo](#observações-para-o-grupo)                           |
 
 ---
 
@@ -40,24 +40,16 @@ Para conseguir rodar o programa, é necessário ter instalados o [Git](https://g
   git clone https://github.com/isa56/2022-3-trabalho-grafos
   ```
 
-2. Acesse a pasta recém clonada e execute os comandos do `CMake` no terminal:
+2. Acesse a pasta recém clonada e execute os comandos para compilar o projeto:
   ```bash
-  cmake -B build
-  cmake --build build
+    g++ -o <execGrupo21.exe> *.cpp
   ```
 
-3. Execute o arquivo que quiser:
+3. Execute o programa principal `main`:
+  ```bash
+    ./<execGrupo21.exe> <arquivo_entrada> <arquivo_saida> <Opc_Direc> <Opc_Peso_Aresta> <Opc_Peso_Nos>
+  ```
 
-    i. O programa principal `main`:
-      ```bash
-      ./build/main
-      ```
-
-
-    ii. Os testes unitários `test`:
-      ```bash
-      ./build/test/nomeDoTeste
-      ```
 
 [↑ Sumário](#sumário)
 
