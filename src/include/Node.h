@@ -39,7 +39,7 @@ public:
      void decrementInDegree();
 
      void addEdge(int id, float weightNode);
-     bool searchEdge(int id);
+     Edge *searchEdge(int id);
      void removeEdge(int id, bool directed, Node *node);
      void removeAllEdges();
 };

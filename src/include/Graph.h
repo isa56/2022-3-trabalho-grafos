@@ -30,7 +30,7 @@ public:
      // Constructor & Destructor
      Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
      ~Graph();
-
+     void setOrder(int order);
      // Getters
      int getOrder();
      int getNumberEdges();
@@ -51,6 +51,7 @@ public:
      void printList();
 
      void graphIntersection(Graph *G1, Graph *G2);
+     void graphUnion(Graph *G1, Graph *G2);
 };
 
 #endif // __GRAPH_H__

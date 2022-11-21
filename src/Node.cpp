@@ -151,7 +151,7 @@ void Node::removeEdge(int _id, bool _directed, Node *_node)
      }
 }
 
-bool Node::searchEdge(int _id)
+Edge *Node::searchEdge(int _id)
 {
      // Verifica se tem aresta no nó
      if (this->firstEdge != nullptr)
@@ -162,12 +162,12 @@ bool Node::searchEdge(int _id)
           do
           {
                if (aux->getId() == _id)  // vefico se a aresta tem o mesmo
-                    return true;         // id passado por parametro e retorno true
+                    return aux;          // id passado por parametro e retorno true
                aux = aux->getNextEdge(); // Pego a proxima aresta
 
           } while (aux != nullptr); // Verifico se ela existe
      }
-     return false;
+     return nullptr;
 }
 
 // Destrutor

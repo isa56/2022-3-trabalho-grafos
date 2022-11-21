@@ -49,7 +49,6 @@ int main(int argc, char const *argv[])
   graph = readFile(input_file, atoi(orientado.c_str()), atoi(pesoAresta.c_str()), atoi(pesoVertices.c_str()));
 
   mainMenu(output_file, graph);
-  graph->printList();
 
   // Fechando arquivo de entrada
   input_file.close();
