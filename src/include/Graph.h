@@ -17,26 +17,26 @@ class Graph
      // Atributes
 private:
      int order;
-     int numberEdges;
+     int edgesNumber;
      int position; // posição de inserção do node
      bool directed;
-     bool weightedEdge;
-     bool weightedNode;
+     bool edgeHasWeight;
+     bool nodeHasWeight;
 
      Node *firstNode;
      Node *lastNode;
 
 public:
      // Constructor & Destructor
-     Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
+     Graph(int order, bool directed, bool edgeWeighted, bool nodeWeighted);
      ~Graph();
      void setOrder(int order);
      // Getters
      int getOrder();
-     int getNumberEdges();
-     bool getDirected();
-     bool getWeightedEdge();
-     bool getWeightedNode();
+     int getEdgesNumber();
+     bool isDirected();
+     bool isEdgeWeighted();
+     bool isNodeWeighted();
      Node *getFirstNode();
      Node *getLastNode();
      Node *getNode(int id);

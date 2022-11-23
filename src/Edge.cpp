@@ -6,8 +6,8 @@ using namespace std;
 Edge::Edge(int _id)
 {
      this->id = _id;
-     this->weightEdge = 0;
-     this->nexEdge = nullptr;
+     this->edgeWeight = 0;
+     this->nextEdge = nullptr;
 }
 // Pega o Id da aresta
 int Edge::getId()
@@ -15,32 +15,32 @@ int Edge::getId()
      return this->id;
 }
 // Pega o peso da aresta
-float Edge::getWeightEdge()
+float Edge::getEdgeWeight()
 {
-     return this->weightEdge;
+     return this->edgeWeight;
 }
 // Pega a proxima aresta
 Edge *Edge::getNextEdge()
 {
-     return this->nexEdge;
+     return this->nextEdge;
 }
 // Seta o peso na aresta
-void Edge::setWeightEdge(int _weightEdge)
+void Edge::setEdgeWeight(int _edgeWeight)
 {
-     this->weightEdge = _weightEdge;
+     this->edgeWeight = _edgeWeight;
 }
 // Seta  a proxima aresta
-void Edge::setNextEdge(Edge *_nexEdge)
+void Edge::setNextEdge(Edge *_nextEdge)
 {
-     this->nexEdge = _nexEdge;
+     this->nextEdge = _nextEdge;
 }
 // Destrutor
 Edge::~Edge()
 {
      // Verifica se não é a ultima aresta
-     if (this->nexEdge != nullptr)
+     if (this->nextEdge != nullptr)
      {
-          delete this->nexEdge;
-          this->nexEdge = nullptr;
+          delete this->nextEdge;
+          this->nextEdge = nullptr;
      }
 }

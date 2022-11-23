@@ -8,7 +8,7 @@
 #include "Graph.h"
 using namespace std;
 
-Graph *readFile(ifstream &input_file, int directed, int weightedEdge, int weightedNode)
+Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNodeWeighted)
 {
 
      // Variáveis para auxiliar na criação dos nós no Grafo
@@ -20,12 +20,12 @@ Graph *readFile(ifstream &input_file, int directed, int weightedEdge, int weight
      input_file >> order;
 
      // Criando objeto grafo
-     Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
+     Graph *graph = new Graph(order, directed, isEdgeWeighted, isNodeWeighted);
 
      // Leitura de arquivo
 
      // Ler um arquivo sem peso nas Aresta e nos Vertices
-     if (!graph->getWeightedEdge() && !graph->getWeightedNode())
+     if (!isEdgeWeighted && !isNodeWeighted)
      {
           while (input_file >> idNodeSource >> idNodeTarget)
           {
@@ -33,7 +33,7 @@ Graph *readFile(ifstream &input_file, int directed, int weightedEdge, int weight
           }
      }
      // Ler um arquivo com peso nas Aresta e sem peso nos Vertices
-     else if (graph->getWeightedEdge() && !graph->getWeightedNode())
+     else if (isEdgeWeighted && !isNodeWeighted)
      {
           float edgeWeight;
           while (input_file >> idNodeSource >> idNodeTarget >> edgeWeight)
@@ -42,7 +42,7 @@ Graph *readFile(ifstream &input_file, int directed, int weightedEdge, int weight
           }
      }
      // Ler um arquivo com peso nos Vertices e sem peso nas Aresta
-     else if (graph->getWeightedNode() && !graph->getWeightedEdge())
+     else if (isEdgeWeighted && !isNodeWeighted)
      {
           float nodeSourceWeight, nodeTargetWeight;
           while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
@@ -53,7 +53,7 @@ Graph *readFile(ifstream &input_file, int directed, int weightedEdge, int weight
           }
      }
      // Ler um arquivo com peso nas Aresta e nos Vertices
-     else if (graph->getWeightedNode() && graph->getWeightedEdge())
+     else if (isEdgeWeighted && isNodeWeighted)
      {
           float nodeSourceWeight, nodeTargetWeight, edgeWeight;
           while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
@@ -107,8 +107,8 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file)
           int order = graphG1->getOrder();
           bool directed, weightedEdge, weightedNode;
           directed = graphG1->getDirected();
-          weightedEdge = graphG1->getWeightedEdge();
-          weightedNode = graphG1->getWeightedNode();
+          weightedEdge = graphG1->isEdgeWeighted();
+          weightedNode = graphG1->isNodeWeighted();
 
           input_file.open("Entrada_Intersecao.txt", ios::in);
           // Cria um grafo com as mesmas especificações do G1
@@ -128,8 +128,8 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file)
           int order = graphG1->getOrder();
           bool directed, weightedEdge, weightedNode;
           directed = graphG1->getDirected();
-          weightedEdge = graphG1->getWeightedEdge();
-          weightedNode = graphG1->getWeightedNode();
+          weightedEdge = graphG1->isEdgeWeighted();
+          weightedNode = graphG1->isNodeWeighted();
 
           // Desconderar o nome Entrada_Intersecao.txt
           input_file.open("Entrada_Intersecao.txt", ios::in);

@@ -9,12 +9,12 @@ Graph::Graph(int _order, bool _directed, bool _weightedEdge, bool _weightedNode)
 {
      this->order = _order;
      this->directed = _directed;
-     this->weightedEdge = _weightedEdge;
-     this->weightedNode = _weightedNode;
+     this->edgeHasWeight = _weightedEdge;
+     this->nodeHasWeight = _weightedNode;
 
      this->firstNode = nullptr;
      this->lastNode = nullptr;
-     this->numberEdges = 0;
+     this->edgesNumber = 0;
 }
 void Graph::setOrder(int _order)
 {
@@ -25,24 +25,24 @@ int Graph::getOrder()
 {
      return this->order;
 }
-int Graph::getNumberEdges()
+int Graph::getEdgesNumber()
 {
-     return this->numberEdges;
+     return this->edgesNumber;
 }
 
-bool Graph::getDirected()
+bool Graph::isDirected()
 {
      return this->directed;
 }
 
-bool Graph::getWeightedEdge()
+bool Graph::isEdgeWeighted()
 {
-     return this->weightedEdge;
+     return this->edgeHasWeight;
 }
 
-bool Graph::getWeightedNode()
+bool Graph::isNodeWeighted()
 {
-     return this->weightedNode;
+     return this->nodeHasWeight;
 }
 
 Node *Graph::getFirstNode()
@@ -97,21 +97,22 @@ void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
      }
 
      // Insiro aresta do nó id-targetId
-     Node *nodeId = this->getNode(_id);
-     Node *nodeTargetId = this->getNode(_targetId);
-     if (this->getDirected())
+
+     Node *node = this->getNode(_id);
+     Node *targetNode = this->getNode(_targetId);
+     if (this->isDirected())
      {
-          nodeId->addEdge(_targetId, _weightEdge);
-          nodeId->incrementOutDegree();
-          nodeTargetId->incrementInDegree();
+          node->addEdge(_targetId, _weightEdge);
+          node->incrementOutDegree();
+          targetNode->incrementInDegree();
      }
      else
      {
-          nodeId->addEdge(_targetId, _weightEdge);
-          nodeTargetId->addEdge(_id, _weightEdge);
+          node->addEdge(_targetId, _weightEdge);
+          targetNode->addEdge(_id, _weightEdge);
      }
 
-     this->numberEdges++;
+     this->edgesNumber++;
 }
 void Graph::removeNode(int _id)
 {
@@ -171,11 +172,13 @@ Node *Graph::getNode(int _id)
 void Graph::printList()
 {
      cout << "Ordem: " << this->getOrder() << endl;
-     cout << "numero de Arestas: " << this->getNumberEdges() << endl;
-     cout << "Direcionado: " << this->getDirected() << endl;
+     cout << "numero de Arestas: " << this->getEdgesNumber() << endl;
+     cout << "Direcionado: " << this->isDirected() << endl;
      // cout << this->getNodePosition() << endl;
-     cout << "Peso na aresta: " << this->getWeightedEdge() << endl;
-     cout << "Peso no vertice: " << this->getWeightedNode() << endl;
+
+     // TODO: criar funcao para retornar o peso no nó e na aresta (antes estava retornando apenas se o grafo era ponderado por no ou aresta)
+     //  cout << "Peso na aresta: " << this->isEdgeWeighted() << endl;
+     //  cout << "Peso no vertice: " << this->isNodeWeighted() << endl;
 
      Node *aux = this->getFirstNode();
      Edge *edge;
@@ -257,7 +260,7 @@ void Graph::graphIntersection(Graph *G1, Graph *G2)
      bool isolatedVertex;   // Variavel auxiliar para inserir vertices islodados
 
      // Se undirected é 1 signiica que ele é não direcionado
-     int undirected = this->getDirected() == true ? 0 : 1;
+     int undirected = this->isDirected() == true ? 0 : 1;
      if (order == 0) // Sem interseção
      {
           cout << "Não tem intercesão entre os Grafos G1 e G2";
@@ -301,7 +304,7 @@ void Graph::graphIntersection(Graph *G1, Graph *G2)
                          EdgeG2 = G2->getNode(_id)->searchEdge(_targetId); // A aresta entre _id e _targetId No G2
                          if (EdgeG2 != nullptr)
                          {
-                              _weightEdge = EdgeG1->getWeightEdge(); // Peso da aresta
+                              _weightEdge = EdgeG1->getEdgeWeight(); // Peso da aresta
                               isolatedVertex = false;                // O vertice X não é isolado, tem aresta
                               this->insertEdge(_id, _targetId, _weightEdge);
                          }
@@ -350,7 +353,7 @@ void Graph::graphUnion(Graph *G1, Graph *G2)
      Edge *EdgeG1, *EdgeG2; // Fica com a aresta entre os dois vertices (_id e _targetId)
 
      // Se undirected é 1 signfica que ele é não direcionado
-     int undirected = this->getDirected() == true ? 0 : 1;
+     int undirected = this->isDirected() == true ? 0 : 1;
      if (order == 0) // G1 e G2 é vazio
      {
           cout << "G1 e G2 é nulo ";
@@ -406,12 +409,12 @@ void Graph::graphUnion(Graph *G1, Graph *G2)
 
                     if (EdgeG1 != nullptr) // Caso em que os vertices estão presente somente em G1
                     {
-                         _weightEdge = EdgeG1->getWeightEdge(); // Peso da aresta
+                         _weightEdge = EdgeG1->getEdgeWeight(); // Peso da aresta
                          this->insertEdge(_id, _targetId, _weightEdge);
                     }
                     else if (EdgeG2 != nullptr) // Caso em que os vertices estão presente somente em G2
                     {
-                         _weightEdge = EdgeG2->getWeightEdge(); // Peso da aresta
+                         _weightEdge = EdgeG2->getEdgeWeight(); // Peso da aresta
                          this->insertEdge(_id, _targetId, _weightEdge);
                     }
                     else

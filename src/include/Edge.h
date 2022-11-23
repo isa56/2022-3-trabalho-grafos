@@ -7,8 +7,8 @@ class Edge
 private:
      // Artributos
      int id;
-     float weightEdge;
-     Edge *nexEdge;
+     float edgeWeight;
+     Edge *nextEdge;
      int origin;
      int destiny;
 
@@ -18,14 +18,14 @@ public:
      ~Edge();                    // Destrutor
 
      int getId();
-     float getWeightEdge();
+     float getEdgeWeight();
      Edge *getNextEdge();
 
      int getOrigin();
      int getDestiny();
 
      void setNextEdge(Edge *nexEdge);
-     void setWeightEdge(int WeightEdge);
+     void setEdgeWeight(int edgeWeight);
 
      void setOrigin(int origin);
      void setDestiny(int destiny);

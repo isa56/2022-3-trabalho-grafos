@@ -24,9 +24,9 @@ int main(int argc, char const *argv[])
   string program_name(argv[0]);
   string input_file_name(argv[1]);
   string output_file_name(argv[2]);
-  string orientado(argv[3]);
-  string pesoAresta(argv[4]);
-  string pesoVertices(argv[5]);
+  string isOriented(argv[3]);
+  string isEdgeWeighted(argv[4]);
+  string isNodeWeighted(argv[5]);
 
   ifstream input_file;
   ofstream output_file;
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[])
 
   Graph *graph;
 
-  graph = readFile(input_file, atoi(orientado.c_str()), atoi(pesoAresta.c_str()), atoi(pesoVertices.c_str()));
+  graph = readFile(input_file, atoi(isOriented.c_str()), atoi(isEdgeWeighted.c_str()), atoi(isNodeWeighted.c_str()));
 
   mainMenu(output_file, graph);
 
@@ -66,9 +66,9 @@ int main(int argc, char const *argv[])
   cout << "Nome do arquivo de entrada .txt! -> " << input_file_name << endl;
   cout << "Nome do arquivo de saida .txt! -> " << output_file_name << endl;
 
-  cout << "O grafo sera" << ((orientado == "0") ? " não orientado\n" : " orientado\n");
-  cout << "O grafo sera com peso nas arestas? R: -> " << ((pesoAresta == "0") ? " não!\n" : "sim!\n");
-  cout << "O grafo sera com peso nos vertices? R: -> " << ((pesoVertices == "0") ? " não!\n" : "sim!\n");
+  cout << "O grafo sera" << ((isOriented == "0") ? " não orientado\n" : " orientado\n");
+  cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
+  cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
 
   return 0;
 }

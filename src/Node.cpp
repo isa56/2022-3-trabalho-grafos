@@ -8,7 +8,7 @@ Node::Node(int _id)
      this->lastEdge = nullptr;
      this->firstEdge = nullptr;
      this->nextNode = nullptr;
-     this->weightNode = 0;
+     this->nodeWeight = 0;
      this->inDegree = 0;
      this->outDegree = 0;
      this->id = _id;
@@ -48,9 +48,9 @@ Node *Node::getNextNode()
 
 // sets
 
-void Node::setWeightNode(int _weightNode)
+void Node::setNodeWeight(int _nodeWeight)
 {
-     this->weightNode = _weightNode;
+     this->nodeWeight = _nodeWeight;
 }
 
 void Node::setNextNode(Node *_nextNode)
