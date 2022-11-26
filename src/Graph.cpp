@@ -1,5 +1,7 @@
 #include "./include/Graph.h"
 #include "./include/Metrics.h"
+#include <cctype>
+#include <fstream>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -57,10 +59,8 @@ Node *Graph::getLastNode()
 
 // Insere um Novo vertice
 void Graph::insertNode(int _id)
-{
-     Node *next;
-     Node *aux = nullptr;
 
+{
      // Verifica se já existe algum nó
      if (this->getFirstNode() == nullptr)
      {
@@ -71,6 +71,9 @@ void Graph::insertNode(int _id)
      {
           if (!this->searchNode(_id))
           {
+               Node *next;
+               Node *aux = nullptr;
+
                next = this->firstNode;
                // Procura o último nó inserido
                while (next != nullptr)
@@ -105,11 +108,15 @@ void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
           node->addEdge(_targetId, _weightEdge);
           node->incrementOutDegree();
           targetNode->incrementInDegree();
+          node->incrementDegree();
+          targetNode->incrementDegree();
      }
      else
      {
           node->addEdge(_targetId, _weightEdge);
           targetNode->addEdge(_id, _weightEdge);
+          node->incrementDegree();
+          targetNode->incrementDegree();
      }
 
      this->edgesNumber++;
@@ -216,16 +223,17 @@ void Graph::printList()
 // Destrutor
 Graph::~Graph()
 {
-     Node *nextNode = this->firstNode;
+     Node *nextNode = this->getFirstNode();
 
      while (nextNode != nullptr)
      {
-
           nextNode->removeAllEdges();
-          Node *auxNode = nextNode->getNextNode();
+          this->firstNode = nextNode->getNextNode();
           delete nextNode;
-          nextNode = auxNode;
+          nextNode = this->getFirstNode();
      }
+     this->firstNode = this->lastNode = nullptr;
+     delete nextNode;
 }
 
 void Graph::graphIntersection(Graph *G1, Graph *G2)
@@ -426,4 +434,208 @@ void Graph::graphUnion(Graph *G1, Graph *G2)
                x++;
           }
      }
+}
+
+void Graph::graphDifference(Graph *G1, Graph *G2)
+{
+     cout << "Grafo diferença" << endl;
+
+     vector<int> NodeDifference; // Todos as arestas de  G1 e G2
+
+     Node *NodeG1 = G1->getFirstNode(); // Pegando o primeiro Nó de G1
+
+     while (NodeG1 != nullptr) // Percorrendo os Nos de G1
+     {
+          NodeDifference.push_back(NodeG1->getId()); // Colocando todos os vertices de G1
+          NodeG1 = NodeG1->getNextNode();            // Proximo vertice de G1
+     }
+     Node *NodeG2 = G2->getFirstNode(); // Pegando o primeiro Nó de G2
+
+     while (NodeG2 != nullptr) // Percorrendo os Nos de G2
+     {
+          // Verifico se o vertice de V2 esta em NodeDifference (V1 u V2)
+          if (find(NodeDifference.begin(), NodeDifference.end(), NodeG2->getId()) == NodeDifference.end())
+          {
+               // Significa que V de G1 é diferente de V de G2 (G2 não esta contido em G1)
+               cout << "G2 não esta contido em G1: Esta operação nao pode ser concluida" << endl;
+               return;
+          }
+          NodeG2 = NodeG2->getNextNode(); // Proximo vertice de G2
+     }
+
+     int order = NodeDifference.size();
+     this->setOrder(order);
+
+     int x = 0;             // Variavel auxiliar para percorrer o vetor
+     int _id, _targetId;    // Variavel auxiliar para salvar os vertices (padrao insertNode())
+     float _weightEdge;     // Variavel auxiliar para salvar o peso da aresta entre dois vertices (padrao insertNode())
+     Edge *EdgeG1, *EdgeG2; // Fica com a aresta entre os dois vertices (_id e _targetId)
+
+     // Se undirected é 1 signfica que ele é não direcionado
+     int undirected = this->isDirected() == true ? 0 : 1;
+     while (x < (order - undirected))
+     {
+          _id = NodeDifference[x];
+          /*
+               (x + 1) * undirected
+               undirected é 0 se o grafo é direcionado e 1 se o grafo não é direcionado
+               Quando é direcionado eu preciso ir de 0 ate order verificando todas as
+               possibilidades, ja que o sentido da aresta importa combinaçoes
+               x = 0-> order e y = x+1 -> order
+
+               Ja no não direcionado eu consigo ter um desempenho melhor, tento em vista
+               que não é preciso verificar o ultimo vertice e as combinaçoes e sempre
+               x = 0 -> order-1 e y = x+1 -> order
+          */
+
+          for (int y = ((x + 1) * undirected); y < order; y++)
+          {
+               EdgeG1 = EdgeG2 = nullptr;
+               _targetId = NodeDifference[y];
+               /*
+               Esses dois if é para não ter erro de memoria
+               Eles garantem  que eu so vou pegar a aresta se e somente se, no meu grafo tiver os vertices
+               _id e _targetId
+               */
+               if (G1->getNode(_id) != nullptr && G1->getNode(_targetId) != nullptr)
+                    EdgeG1 = G1->getNode(_id)->searchEdge(_targetId); // A aresta entre _id e _targetId No G1
+               if (G2->getNode(_id) != nullptr && G2->getNode(_targetId) != nullptr)
+                    EdgeG2 = G2->getNode(_id)->searchEdge(_targetId); // A aresta entre _id e _targetId No G2
+
+               /*
+               A verificação de que Há arestas é
+               * A aresta não pode esta em G1 e G2 (Por isso verifico sempre se um é nullptr)
+                 1° if() Verifica se a aresta que tem em G1 não existe em G2
+                 2° else if() Verifica se a aresta que tem em G2 não existe em G1
+                 3° else{} Se chegar aqui significa que ha uma aresta entr _id e _targetId
+                    tanto em G1 quanto em G2, e é por isso que o vertice é isolado
+               */
+
+               if (EdgeG1 != nullptr && EdgeG2 == nullptr) // Caso em que os vertices estão presente somente em G1
+               {
+                    _weightEdge = EdgeG1->getEdgeWeight(); // Peso da aresta
+                    this->insertEdge(_id, _targetId, _weightEdge);
+               }
+               else if (EdgeG2 != nullptr && EdgeG1 == nullptr) // Caso em que os vertices estão presente somente em G2
+               {
+                    _weightEdge = EdgeG2->getEdgeWeight(); // Peso da aresta
+                    this->insertEdge(_id, _targetId, _weightEdge);
+               }
+               else
+               {
+                    this->insertNode(_id); // Insere o vertice sem Aresta
+               }
+          }
+
+          x++;
+     }
+}
+void Graph::PERT()
+{
+     // TODO: implementar a Rede PERT
+     cout << "Rede PERT" << endl;
+     // [] Verificar se é aciclico (Com busca em profundidade)
+     // [] Implementar Rede PERT
+
+     vector<int> nodeStart;
+
+     Node *Nos = this->getFirstNode();
+     Edge *Arestas;
+     int i = 0;
+     // Ja sabemos quais os vertice para começar na rede PERT
+     while (Nos != nullptr)
+     {
+
+          if (Nos->getInDegree() == 0 && Nos->getOutDegree() > 0)
+          {
+               nodeStart.push_back(Nos->getId());
+          }
+
+          Nos = Nos->getNextNode();
+     }
+}
+void Graph::fileDot(ofstream &output_file, GraphDOT GDot)
+{
+     Node *node = this->getFirstNode();
+     Edge *edge;
+     // Para a sintaxe do .dot
+     string IsDirected = this->isDirected() == true ? "digraph" : "graph";
+     string symbolAux = this->isDirected() == true ? "->" : "--";
+     bool weightedEdge = this->isEdgeWeighted();
+
+     // Espaço e aspas
+     char space = 32, quotationMarks = 34;
+
+     string label = '"' + GDot.description + '"';
+     // Descrição comentada no arquivo .dot
+     output_file << "/*\nGrupo 21 (Eduardo Araujo, Isadora Ferreira e Miguel Sales)\nDisciplina Teoria dos Grafos - UFJF - Prof. Stênio Sã\n*/ " << endl;
+     // Mostra os aquivo(s) que gerou o grafo
+     output_file << "/*\n"
+                 << "G1 é o arquivo: " << GDot.G1;
+     if (GDot.G2.size() > 0)
+          output_file
+              << " e G2 é o arquivo: " << GDot.G2;
+
+     output_file << "\n*/";
+
+     output_file << endl;
+     output_file << IsDirected << "  "
+                 << GDot.type
+                 << " {" << endl;
+     output_file << "label = " << label << endl;
+
+     while (node != nullptr)
+     {
+          // Caso o Vertice seja isolado
+          if (node->getFirstEdge() == nullptr && node->getDegree() == 0)
+               output_file << "  " << node->getId() << endl;
+          if (IsDirected == "digraph")
+          {
+               edge = node->getFirstEdge();
+               while (edge != nullptr)
+               {
+                    // Percorro todas as arestas caso ele seja um grafo direcionado
+                    // O sentido importa e é por isso que eu verifico todas as possibilidades
+                    output_file << node->getId() << "  " << symbolAux;
+                    output_file << "  " << edge->getId() << "  ";
+                    if (weightedEdge)
+                         output_file << "[weight=" << edge->getEdgeWeight()
+                                     << "] [label=" << quotationMarks << space
+                                     << edge->getEdgeWeight() << quotationMarks
+                                     << "] " << endl;
+                    else
+                         output_file << endl;
+                    edge = edge->getNextEdge();
+               }
+          }
+          else
+          {
+               Node *auxNode = node->getNextNode();
+               while (auxNode != nullptr)
+               {
+                    /*
+                    Percorro todas os vertices verificando se há aresta entre eles
+                    (A logica do Grafo direcionado não serve, pois ele repete as arestas)
+                    O Graphviz identifica a Aresta 2 -- 3 Diferente da Aresta 3 --2
+                    (E assim tendo um Multigrafo [múltiplas arestas])
+                    */
+                    edge = node->searchEdge(auxNode->getId());
+                    if (edge != nullptr)
+                    {
+                         output_file << node->getId() << "  " << symbolAux;
+                         output_file << "  " << auxNode->getId() << "  ";
+                         if (weightedEdge)
+                              output_file << "[weight=" << edge->getEdgeWeight()
+                                          << "] [label=" << quotationMarks << space
+                                          << edge->getEdgeWeight() << quotationMarks
+                                          << "] " << endl;
+                         else
+                              output_file << endl;
+                    }
+                    auxNode = auxNode->getNextNode();
+               }
+          }
+          node = node->getNextNode();
+     }
+     output_file << "}";
 }

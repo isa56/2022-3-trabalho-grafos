@@ -11,10 +11,16 @@
 #include <ctime>
 
 using namespace std;
+typedef struct
+{
+     string description; // Descrição do Grafo (Grafo interseção de G1 com G2)
+     string type;        // Tipo do Grafo (interseção, união ou diferença)
+     string G1;
+     string G2;
 
+} GraphDOT;
 class Graph
 {
-     // Atributes
 private:
      int order;
      int edgesNumber;
@@ -42,16 +48,21 @@ public:
      Node *getNode(int id);
      Node *getNodePosition(int position); // Pega um node apartir de sua posição de inserção
 
-     // Other methods
      void insertNode(int id);
      void insertEdge(int id, int target_id, float weight);
      void removeNode(int id);
      bool searchNode(int id);
 
      void printList();
+     // Criar um arquivo na linguagem “dot” para
+     // geração de grafos para no software Graphviz
+
+     void fileDot(ofstream &output_file, GraphDOT GDot);
 
      void graphIntersection(Graph *G1, Graph *G2);
      void graphUnion(Graph *G1, Graph *G2);
+     void graphDifference(Graph *G1, Graph *G2);
+     void PERT(); // Rede Pert
 };
 
 #endif // __GRAPH_H__

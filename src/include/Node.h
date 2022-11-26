@@ -25,18 +25,22 @@ public:
      Edge *getFirstEdge();
      Edge *getLastEdge();
      Node *getNextNode();
+     int getDegree();
      int getInDegree();
      int getOutDegree();
-
      void setNodeWeight(int nodeWeight);
      void setNextNode(Node *nextNode);
 
      void setFirstEdge(Edge *firstEdge);
 
-     void incrementOutDegree();
-     void decrementOutDegree();
+     void incrementDegree();
+     void decrementDegree();
+
      void incrementInDegree();
      void decrementInDegree();
+
+     void incrementOutDegree();
+     void decrementOutDegree();
 
      void addEdge(int id, float weightNode);
      Edge *searchEdge(int id);

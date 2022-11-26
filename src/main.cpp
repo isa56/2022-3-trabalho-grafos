@@ -3,7 +3,7 @@
 #include <fstream>
 #include "./include/Graph.h"
 #include "./include/FileUtils.h"
-// #define INPUT_POND_DIR "./input
+
 using namespace std;
 
 int main(int argc, char const *argv[])
@@ -28,6 +28,9 @@ int main(int argc, char const *argv[])
   string isEdgeWeighted(argv[4]);
   string isNodeWeighted(argv[5]);
 
+  input_file_name = "./input/" + input_file_name;
+  output_file_name = "./output/" + output_file_name;
+
   ifstream input_file;
   ofstream output_file;
   input_file.open(input_file_name, ios::in);
@@ -36,11 +39,13 @@ int main(int argc, char const *argv[])
   if (!input_file.is_open())
   {
     cout << "Erro no arquivo de leitura!" << endl;
+    cout << input_file_name;
     return -1;
   }
   if (!output_file.is_open())
   {
     cout << "Erro no arquivo de salvamento!" << endl;
+    cout << output_file_name;
     return -1;
   }
 
@@ -48,7 +53,7 @@ int main(int argc, char const *argv[])
 
   graph = readFile(input_file, atoi(isOriented.c_str()), atoi(isEdgeWeighted.c_str()), atoi(isNodeWeighted.c_str()));
 
-  mainMenu(output_file, graph);
+  mainMenu(output_file, graph, input_file_name);
 
   // Fechando arquivo de entrada
   input_file.close();
@@ -70,5 +75,6 @@ int main(int argc, char const *argv[])
   cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
   cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
 
+  // delete graph;
   return 0;
 }

@@ -30,7 +30,10 @@ Edge *Node::getFirstEdge()
 {
      return this->firstEdge;
 }
-
+int Node::getDegree()
+{
+     return this->degree;
+}
 int Node::getInDegree()
 {
      return this->inDegree;
@@ -58,6 +61,11 @@ void Node::setNextNode(Node *_nextNode)
      this->nextNode = _nextNode;
 }
 
+// Incrementa o Grau
+void Node::incrementDegree()
+{
+     this->degree++;
+}
 // Incrementa o Grau de entrada
 void Node::incrementInDegree()
 {
@@ -67,6 +75,11 @@ void Node::incrementInDegree()
 void Node::incrementOutDegree()
 {
      this->outDegree++;
+}
+// Decrementa o Grau
+void Node::decrementDegree()
+{
+     this->degree--;
 }
 // Decrementa o Grau de entrada
 void Node::decrementInDegree()
@@ -86,7 +99,7 @@ void Node::addEdge(int _id, float _weightEdge)
      {
           // Add uma nova aresta(sem perder a referencia)
           Edge *NewEdge = new Edge(_id);
-          NewEdge->setWeightEdge(_weightEdge);
+          NewEdge->setEdgeWeight(_weightEdge);
           this->lastEdge->setNextEdge(NewEdge);
           this->lastEdge = NewEdge;
      }
@@ -95,7 +108,7 @@ void Node::addEdge(int _id, float _weightEdge)
           // Add uma nova aresta caso ainda nao tenha
           // nenhuma aresta no No(sem perder a referencia)
           this->firstEdge = new Edge(_id);
-          this->firstEdge->setWeightEdge(_weightEdge);
+          this->firstEdge->setEdgeWeight(_weightEdge);
           this->lastEdge = this->firstEdge;
      }
 }
@@ -112,7 +125,9 @@ void Node::removeAllEdges()
           {
                next = aux->getNextEdge();
                delete aux;
+               aux = next;
           }
+          delete aux, next;
      }
      this->firstEdge = this->lastEdge = nullptr;
 }
