@@ -34,13 +34,3 @@ void Edge::setNextEdge(Edge *_nextEdge)
 {
      this->nextEdge = _nextEdge;
 }
-// Destrutor
-Edge::~Edge()
-{
-     // Verifica se não é a ultima aresta
-     if (this->nextEdge != nullptr)
-     {
-          delete this->nextEdge;
-          this->nextEdge = nullptr;
-     }
-}

@@ -48,10 +48,14 @@ Node *Node::getNextNode()
 {
      return this->nextNode;
 }
+float Node::getNodeWeight()
+{
+     return this->nodeWeight;
+}
 
 // sets
 
-void Node::setNodeWeight(int _nodeWeight)
+void Node::setNodeWeight(float _nodeWeight)
 {
      this->nodeWeight = _nodeWeight;
 }
@@ -127,7 +131,6 @@ void Node::removeAllEdges()
                delete aux;
                aux = next;
           }
-          delete aux, next;
      }
      this->firstEdge = this->lastEdge = nullptr;
 }

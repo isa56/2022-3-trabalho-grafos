@@ -50,7 +50,7 @@ Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNo
           }
      }
      // Ler um arquivo com peso nos Vertices e sem peso nas Aresta
-     else if (isEdgeWeighted && !isNodeWeighted)
+     else if (!isEdgeWeighted && isNodeWeighted)
      {
           float nodeSourceWeight, nodeTargetWeight;
           while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
@@ -64,7 +64,7 @@ Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNo
      else if (isEdgeWeighted && isNodeWeighted)
      {
           float nodeSourceWeight, nodeTargetWeight, edgeWeight;
-          while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
+          while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight >> edgeWeight)
           {
                graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
                graph->getNode(idNodeSource)->setNodeWeight(nodeSourceWeight);
@@ -110,9 +110,8 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
      {
 
           cout << "(A) - Grafo Interseção" << endl;
-          Graph *graphG2;
           ifstream input_file;
-
+          Graph *graphG2;
           // Para passar o G2 via cin
           string Intersection;
           cout << "Qual o diretorio do Grafo G2 <input_file>\n> ";
@@ -137,27 +136,26 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           graphIntersection_->graphIntersection(graphG1, graphG2);
           graphIntersection_->printList();
 
-          // delete graphG1, graphG2, graphIntersection_;
           GDot.description = "Grafo Interseção: dados dois grafos G1 = (V1, E1) e G2 = (V2,E2),\n o grafo interseção de G1 com G2 é dado por: G* = (V1 ∩ V2, E1 ∩ E2);";
           GDot.type = "Intersection";
           graphIntersection_->fileDot(output_file, GDot);
-          // delete graphG2, graphIntersection_;
 
+          delete graphIntersection_;
+          delete graphG2;
           break;
      }
      case 'B': // Grafo União
      {
-          cout << "(B) - Grafo União" << endl;
-          Graph *graphG2;
+          cout << "(A) - Grafo Interseção" << endl;
           ifstream input_file;
-
+          Graph *graphG2;
           // Para passar o G2 via cin
           string Union;
           cout << "Qual o diretorio do Grafo G2 <input_file>\n> ";
           cin >> Union;
           GDot.G2 = Union;
-          input_file.open("./input/" + Union, ios::in);
 
+          input_file.open("./input/" + Union, ios::in);
           while (!input_file.is_open()) // Espera uma entrada valida
           {
                cout << "Erro no arquivo de leitura!" << endl;
@@ -170,30 +168,32 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           // Cria um grafo com as mesmas especificações do G1
           graphG2 = readFile(input_file, directed, weightedEdge, weightedNode);
 
-          Graph *graphUnion = new Graph(order, directed, weightedEdge, weightedNode);
+          Graph *graphUnion_ = new Graph(order, directed, weightedEdge, weightedNode);
 
-          graphUnion->graphUnion(graphG1, graphG2);
-          graphUnion->printList();
+          graphUnion_->graphUnion(graphG1, graphG2);
+          graphUnion_->printList();
+
           GDot.description = "Grafo União: dados dois grafos G1 = (V1, E1) e G2 = (V2,E2),\n o grafo interseção de G1 com G2 é dado por: G+ = (V1 U V2, E1 U E2);";
           GDot.type = "Union";
-          graphUnion->fileDot(output_file, GDot);
-          // delete graphG2, graphUnion;
+
+          graphUnion_->fileDot(output_file, GDot);
+
+          delete graphUnion_;
+          delete graphG2;
           break;
      }
      case 'C': // Grafo Diferença
      {
           cout << "(C) - Grafo Diferença" << endl;
-
-          Graph *graphG2;
           ifstream input_file;
-
+          Graph *graphG2;
           // Para passar o G2 via cin
           string Difference;
           cout << "Qual o diretorio do Grafo G2 <input_file>\n> ";
           cin >> Difference;
           GDot.G2 = Difference;
-          input_file.open("./input/" + Difference, ios::in);
 
+          input_file.open("./input/" + Difference, ios::in);
           while (!input_file.is_open()) // Espera uma entrada valida
           {
                cout << "Erro no arquivo de leitura!" << endl;
@@ -208,13 +208,16 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
 
           Graph *graphDifference_ = new Graph(order, directed, weightedEdge, weightedNode);
 
-          graphDifference_->graphDifference(graphG1, graphG2);
+          graphDifference_->graphUnion(graphG1, graphG2);
           graphDifference_->printList();
+
           GDot.description = "Grafo Diferença: dados dois grafos G1 = (V, E1) e G2 = (V,E2),\no grafo diferença de G1 com G2 é dado por: G_ = (V, E1/E2).Note que operador exige que E1 ⊇ E2;";
           GDot.type = "Difference";
-          graphDifference_->fileDot(output_file, GDot);
-          // delete graphG2, graphDifference_;
 
+          graphDifference_->fileDot(output_file, GDot);
+
+          delete graphDifference_;
+          delete graphG2;
           break;
      }
      case 'D': // Rede Pert

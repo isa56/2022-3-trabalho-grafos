@@ -15,7 +15,6 @@ private:
 public:
      Edge(int id);               // Construtor
      Edge(int id, float weight); // Aresta com peso
-     ~Edge();                    // Destrutor
 
      int getId();
      float getEdgeWeight();

@@ -74,7 +74,7 @@ int main(int argc, char const *argv[])
   cout << "O grafo sera" << ((isOriented == "0") ? " não orientado\n" : " orientado\n");
   cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
   cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
-
-  // delete graph;
+  graph->~Graph();
+  delete graph;
   return 0;
 }
