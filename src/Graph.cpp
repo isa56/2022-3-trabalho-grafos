@@ -522,24 +522,51 @@ void Graph::PERT()
 {
      // TODO: implementar a Rede PERT
      cout << "Rede PERT" << endl;
-     // [] Verificar se é aciclico (Com busca em profundidade)
+     // [x] Verificar se é aciclico (Com busca em profundidade)
      // [] Implementar Rede PERT
 
      vector<int> nodeStart;
-
-     Node *Nos = this->getFirstNode();
-     Edge *Arestas;
+     int largerNumber = 0;
+     Node *node = this->getFirstNode();
+     Edge *edge;
      int i = 0;
      // Ja sabemos quais os vertice para começar na rede PERT
-     while (Nos != nullptr)
+     while (node != nullptr)
      {
 
-          if (Nos->getInDegree() == 0 && Nos->getOutDegree() > 0)
+          if (node->getInDegree() == 0 && node->getOutDegree() > 0)
           {
-               nodeStart.push_back(Nos->getId());
+               nodeStart.push_back(node->getId());
           }
+          if (node->getId() > largerNumber) // Pegar o maior id para setar o vetor como falso
+               largerNumber = node->getId();
 
-          Nos = Nos->getNextNode();
+          node = node->getNextNode();
+     }
+
+     vector<bool> visited;
+     visited.assign(largerNumber, false); // Todos os valores do vetor como falso
+
+     Node *firstNode = this->getFirstNode();
+     bool hasCycle = false;
+     // Verifica se Já encontrou um ciclo ou se acabaram os vertices
+     while (firstNode != nullptr && !hasCycle)
+     {
+          hasCycle = this->DFS(firstNode->getId(), visited);
+          visited.assign(largerNumber, false); // Todos os valores do vetor como falso
+          firstNode = firstNode->getNextNode();
+     }
+
+     if (hasCycle)
+          cout << "\nHá ciclos" << endl;
+     else
+          cout << "\nNão Há ciclos" << endl;
+
+     if (hasCycle || !this->isDirected())
+     {
+          cout << "Para a rede PERT é preciso que o grafo seja acíclico e direcionado"
+               << endl;
+          return;
      }
 }
 void Graph::fileDot(ofstream &output_file, GraphDOT GDot)
@@ -635,4 +662,30 @@ void Graph::fileDot(ofstream &output_file, GraphDOT GDot)
           node = node->getNextNode();
      }
      output_file << "}";
+}
+
+bool Graph::DFS(int node_id, vector<bool> &visited)
+{
+     stack<int> stack;
+     stack.push(node_id);
+     while (!stack.empty())
+     {
+          int idOnTop = stack.top();
+          stack.pop();
+          visited[idOnTop] = true;
+          Edge *aux = this->getNode(idOnTop)->getFirstEdge();
+
+          while (aux != nullptr)
+          {
+               if (!visited[aux->getId()])
+
+                    stack.push(aux->getId());
+
+               if (visited[aux->getId()])
+                    return true;
+               aux = aux->getNextEdge();
+          }
+     }
+
+     return false;
 }

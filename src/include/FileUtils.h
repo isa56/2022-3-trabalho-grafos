@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <string>
 #include "Graph.h"
+#include "Metrics.h"
 
 using namespace std;
 
@@ -224,7 +225,21 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
      {
           // TODO: implementar Rede PERT
           cout << "(D) - Rede Pert" << endl;
+          Metrics p;
+          Setup_metrics(&p);
+          auto t0 = std::chrono::high_resolution_clock::now();
+
           graphG1->PERT();
+
+          cout << endl;
+
+          // Teste de tempo
+          auto t1 = std::chrono::high_resolution_clock::now();
+          std::chrono::duration<double> delta = t1 - t0;
+          Set_CPUtime(&p, delta.count());
+          cout << "Performace:" << endl;
+          Print_metrics(&p);
+          cout << endl;
           break;
      }
      case 'P': // Imprimir o Grafo

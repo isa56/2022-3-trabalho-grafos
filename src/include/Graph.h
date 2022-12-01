@@ -63,6 +63,8 @@ public:
      void graphUnion(Graph *G1, Graph *G2);
      void graphDifference(Graph *G1, Graph *G2);
      void PERT(); // Rede Pert
+
+     bool DFS(int V, vector<bool> &visited);
 };
 
 #endif // __GRAPH_H__
