@@ -34,3 +34,13 @@ void Edge::setNextEdge(Edge *_nextEdge)
 {
      this->nextEdge = _nextEdge;
 }
+
+Node *Edge::getOrigin()
+{
+     return this->origin;
+}
+
+Node *Edge::getDestiny()
+{
+     return this->destiny;
+}
