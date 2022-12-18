@@ -17,6 +17,9 @@ private:
      unsigned int inDegree;
      unsigned int outDegree;
 
+     double ratio;
+     bool visited;
+
 public:
      Node(int id);
      ~Node();
@@ -29,12 +32,16 @@ public:
      int getDegree();
      int getInDegree();
      int getOutDegree();
+     bool isVisited();
+     double getRatio();
 
      float getNodeWeight();
      void setNodeWeight(float nodeWeight);
      void setNextNode(Node *nextNode);
 
      void setFirstEdge(Edge *firstEdge);
+     void setVisited(bool _visited);
+     void setRatio(double _ratio);
 
      void incrementDegree();
      void decrementDegree();
@@ -49,6 +56,7 @@ public:
      Edge *searchEdge(int id);
      void removeEdge(int id, bool directed, Node *node);
      void removeAllEdges();
+
 };
 
 #endif // __NODE_H__

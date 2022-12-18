@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "Node.h"
+#include "Graph.h"
 using namespace std;
 
 typedef struct HeuristicNode
@@ -10,28 +10,41 @@ typedef struct HeuristicNode
     bool visited;
 } HeuristicNode;
 
-HeuristicNode heuristic(vector<HeuristicNode> nodes)
+void calculateRatio(vector<Node> nodes)
 {
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        // calcular o ratio
+        double ratio = nodes[i].getDegree() / nodes[i].getNodeWeight();
+        nodes[i].setRatio(ratio);
+    }
 }
 
-void markNeighborsAsVisited(HeuristicNode heuristicNode)
+Node heuristic(vector<Node> nodes)
+{
+    calculateRatio(nodes);
+}
+
+void markNeighborsAsVisited(Node *node)
 {
     // iterar sobre os vizinhos do nó
-    Node *node = heuristicNode.node;
-    while (node->getLastEdge() != NULL)
+    Edge *neighborEdge = node->getFirstEdge();
+    Node *neighbor = neighborEdge->getDestiny();
+    while (neighbor != nullptr)
     {
+        // marcar como visitado
+        neighbor->setVisited(true);
+        neighborEdge = neighborEdge->getNextEdge();
+        neighbor = neighborEdge->getDestiny();
     }
-    // if (heuristicNode.visited == false) {
-    // heuristicNode.visited = true;
-    // }
 }
 
-bool checkIfSolutionComplete(vector<HeuristicNode> nodes)
+bool checkIfSolutionComplete(vector<Node> nodes)
 {
     // iterar sobre o vector
     for (int i = 0; i < nodes.size(); i++)
     {
-        if (nodes[i].visited == false)
+        if (nodes[i].isVisited() == false)
         {
             return false;
         }
@@ -39,17 +52,55 @@ bool checkIfSolutionComplete(vector<HeuristicNode> nodes)
     return true;
 }
 
-void beginGreedyAlgorithm()
+void fetchAllNodes(vector<Node> *possibleNodes, Graph *graph)
 {
+    // iterar sobre os nós do grafo
+    Node *node = graph->getFirstNode();
+    while (node != nullptr)
+    {
+        // criar um HeuristicNode e adicionar ao vector
+        node->setRatio(0);
+        node->setVisited(false);
+        possibleNodes->push_back(node);
+        node = node->getNextNode();
+    }
+}
+
+void beginGreedyAlgorithm(Graph *graph)
+{
+    clearVisitedAndRatio(graph);
     bool solutionComplete = false;
-    vector<HeuristicNode> solution;
-    vector<HeuristicNode> possibleNodes;
-    // inclui todos os nós que não podem ser "evitados" na solution
+    vector<Node> solution;
+    vector<Node> possibleNodes;
+    // TODO: preenche o vector de possíveis nós com todos os nós do grafo
+    fetchAllNodes(&possibleNodes, graph);
+    // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove da solution
+
+    /*
+        O que a gente precisa fazer?
+        Precisamos ter a referencia de todos os nós que já foram visitados
+
+        Possíveis soluções?
+        1 - Criar um atributo visited no Node e trabalhar direto com ele ao inves do HeuristicNode
+        Problemas: todas as vezes que for rodar o guloso precisa setar o visited de todos os nós como 0 e não temos propriedade ratio para fazer a lógica da razão.
+    */
+
     do
     {
-        HeuristicNode node = heuristic(possibleNodes);
+        Node node = heuristic(possibleNodes);
         solution.push_back(node);
-        markNeighborsAsVisited(node);
+        markNeighborsAsVisited(&node);
         // possibleNodes.erase(possibleNodes.begin());
     } while (!possibleNodes.empty() || !checkIfSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
+}
+
+void clearVisitedAndRatio(Graph *graph)
+{
+    Node *node = graph->getFirstNode();
+    while (node != nullptr)
+    {
+        node->setVisited(false);
+        node->setRatio(0);
+        node = node->getNextNode();
+    }
 }

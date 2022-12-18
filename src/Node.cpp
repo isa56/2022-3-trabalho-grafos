@@ -188,6 +188,26 @@ Edge *Node::searchEdge(int _id)
      return nullptr;
 }
 
+bool Node::isVisited()
+{
+     return this->visited;
+}
+
+double Node::getRatio()
+{
+     return this->ratio;
+}
+
+void Node::setRatio(double _ratio)
+{
+     this->ratio = _ratio;
+}
+
+void Node::setVisited(bool _visited)
+{
+     this->visited = _visited;
+}
+
 // Destrutor
 Node::~Node()
 {
