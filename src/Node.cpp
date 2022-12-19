@@ -12,6 +12,8 @@ Node::Node(int _id)
      this->inDegree = 0;
      this->outDegree = 0;
      this->id = _id;
+     this->ratio = 0;
+     this->visited = false;
 }
 
 // Gets
