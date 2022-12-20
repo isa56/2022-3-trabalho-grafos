@@ -1,14 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "Graph.h"
+#include "SortingMethods.h"
 using namespace std;
-
-typedef struct HeuristicNode
-{
-    Node *node;
-    double ratio;
-    bool visited;
-} HeuristicNode;
 
 void calculateRatio(vector<Node> nodes)
 {
@@ -16,18 +10,29 @@ void calculateRatio(vector<Node> nodes)
     {
         // calcular o ratio
         double ratio = nodes[i].getDegree() / nodes[i].getNodeWeight();
+        // problema: se o nó já foi visitado, o ratio deve ser reduzido pela metade, mas isso será feito todas as vezes que passarmos por aqui
         if (nodes[i].isVisited())
         {
-            
+            ratio *= 0.5;
         }
         nodes[i].setRatio(ratio);
     }
 }
 
+// WIP: implementar o algoritmo guloso randomizado
+Node randomizedHeuristic(vector<Node> nodes, float alpha)
+{
+    calculateRatio(nodes);
+    mergeSort(nodes, 0, (nodes.size() - 1));
+    int index = (int) (alpha * nodes.size());
+    return nodes[index];
+}
+
 Node heuristic(vector<Node> nodes)
 {
     calculateRatio(nodes);
-    // ordena de forma decrescente:
+    mergeSort(nodes, 0, (nodes.size() - 1));    // ordenar o vector de nós por ratio
+    return nodes[0];                            // retornar o nó com maior ratio
 }
 
 void markNeighborsAsVisited(Node *node)
@@ -45,7 +50,7 @@ void markNeighborsAsVisited(Node *node)
     }
 }
 
-bool checkIfSolutionComplete(vector<Node> nodes)
+bool isSolutionComplete(vector<Node> nodes)
 {
     // iterar sobre o vector
     for (int i = 0; i < nodes.size(); i++)
@@ -88,8 +93,7 @@ void beginGreedyAlgorithm(Graph *graph)
         Node node = heuristic(possibleNodes);
         solution.push_back(node);
         markNeighborsAsVisited(&node);
-        // possibleNodes.erase(possibleNodes.begin());
-    } while (!possibleNodes.empty() || !checkIfSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
+    } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
     clearVisitedAndRatio(graph);
 }
 
