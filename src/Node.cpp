@@ -50,14 +50,25 @@ Node *Node::getNextNode()
 {
      return this->nextNode;
 }
-float Node::getNodeWeight()
+
+int Node::getNodeWeight()
 {
      return this->nodeWeight;
 }
 
+bool Node::isVisited()
+{
+     return this->visited;
+}
+
+double Node::getRatio()
+{
+     return this->ratio;
+}
+
 // sets
 
-void Node::setNodeWeight(float _nodeWeight)
+void Node::setNodeWeight(int _nodeWeight)
 {
      this->nodeWeight = _nodeWeight;
 }
@@ -188,16 +199,6 @@ Edge *Node::searchEdge(int _id)
           } while (aux != nullptr); // Verifico se ela existe
      }
      return nullptr;
-}
-
-bool Node::isVisited()
-{
-     return this->visited;
-}
-
-double Node::getRatio()
-{
-     return this->ratio;
 }
 
 void Node::setRatio(double _ratio)

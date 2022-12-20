@@ -10,8 +10,8 @@ private:
      int id;
      Edge *firstEdge;
      Edge *lastEdge;
-     float nodeWeight;
      Node *nextNode;
+     int nodeWeight;
 
      unsigned int degree;
      unsigned int inDegree;
@@ -34,9 +34,9 @@ public:
      int getOutDegree();
      bool isVisited();
      double getRatio();
+     int getNodeWeight();
 
-     float getNodeWeight();
-     void setNodeWeight(float nodeWeight);
+     void setNodeWeight(int nodeWeight);
      void setNextNode(Node *nextNode);
 
      void setFirstEdge(Edge *firstEdge);

@@ -74,6 +74,7 @@ void Graph::insertNode(int _id)
           this->lastNode = newNode;
      }
 }
+
 void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
 {
      // Se o Nó existe eu so adiciono a aresta
@@ -568,6 +569,13 @@ void Graph::PERT()
                << endl;
           return;
      }
+
+     vector<int> s;
+     int alfa = 0;
+
+    
+     
+
 }
 void Graph::fileDot(ofstream &output_file, GraphDOT GDot)
 {
