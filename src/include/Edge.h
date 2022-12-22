@@ -1,8 +1,6 @@
 #ifndef __EDGE_H__
 #define __EDGE_H__
 
-#include "Node.h"
-
 class Edge
 {
 
@@ -11,8 +9,8 @@ private:
      int id;
      float edgeWeight;
      Edge *nextEdge;
-     Node *origin;
-     Node *destiny;
+     int originId;
+     int destinyId;
 
 public:
      Edge(int id);               // Construtor
@@ -22,8 +20,8 @@ public:
      float getEdgeWeight();
      Edge *getNextEdge();
 
-     Node *getOrigin();
-     Node *getDestiny();
+     int getOriginId();
+     int getDestinyId();
 
      void setNextEdge(Edge *nexEdge);
      void setEdgeWeight(int edgeWeight);

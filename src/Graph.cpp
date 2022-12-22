@@ -1,10 +1,11 @@
-#include "./include/Graph.h"
-#include "./include/Metrics.h"
 #include <cctype>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
+#include "include/Graph.h"
+#include "include/Metrics.h"
 
 // Construtor
 Graph::Graph(int _order, bool _directed, bool _weightedEdge, bool _weightedNode)
@@ -164,6 +165,10 @@ Node *Graph::getNode(int _id)
                return node;
           node = node->getNextNode();
      }
+     return nullptr;
+}
+Node *Graph::getNodeByPosition(int position)
+{
      return nullptr;
 }
 void Graph::printList()

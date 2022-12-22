@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./include/Node.h"
+#include "include/Node.h"
 
 using namespace std;
 // Construtor
@@ -204,6 +204,11 @@ Edge *Node::searchEdge(int _id)
 void Node::setRatio(double _ratio)
 {
      this->ratio = _ratio;
+}
+
+void Node::setFirstEdge(Edge *firstEdge)
+{
+     this->firstEdge = firstEdge;
 }
 
 void Node::setVisited(bool _visited)

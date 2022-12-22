@@ -46,7 +46,7 @@ public:
      Node *getFirstNode();
      Node *getLastNode();
      Node *getNode(int id);
-     Node *getNodePosition(int position); // Pega um node apartir de sua posição de inserção
+     Node *getNodeByPosition(int position); // Pega um node apartir de sua posição de inserção
 
      void insertNode(int id);
      void insertEdge(int id, int target_id, float weight);

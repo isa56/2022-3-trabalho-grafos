@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "./include/Graph.h"
-#include "./include/FileUtils.h"
+#include "include/Graph.h"
+#include "include/FileUtils.h"
 
 using namespace std;
 
