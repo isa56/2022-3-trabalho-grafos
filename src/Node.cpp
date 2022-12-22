@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./include/Node.h"
+#include "include/Node.h"
 
 using namespace std;
 // Construtor
