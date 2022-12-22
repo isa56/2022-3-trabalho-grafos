@@ -9,29 +9,29 @@ void calculateRatio(vector<Node*> nodes)
     for (int i = 0; i < nodes.size(); i++)
     {
         // calcular o ratio
-        double ratio = nodes[i]->getDegree() / nodes[i]->getNodeWeight();
+        float ratio = (nodes[i]->getDegree() / (float)(nodes[i]->getNodeWeight()));
         // problema: se o nó já foi visitado, o ratio deve ser reduzido pela metade, mas isso será feito todas as vezes que passarmos por aqui
         if (nodes[i]->isVisited())
         {
-            ratio *= 0.5;
+            ratio = ratio * 0.5;
         }
         nodes[i]->setRatio(ratio);
     }
 }
 
 // WIP: implementar o algoritmo guloso randomizado
-Node* randomizedHeuristic(vector<Node*> nodes, float alpha)
+Node *randomizedHeuristic(vector<Node*> nodes, float alpha)
 {
     calculateRatio(nodes);
-    mergeSort(nodes, 0, (nodes.size() - 1));
+    mergeSort(&nodes, 0, (nodes.size() - 1));
     int index = (int)(alpha * nodes.size());
     return nodes[index];
 }
 
-Node* heuristic(vector<Node*> nodes)
+Node *heuristic(vector<Node *> nodes)
 {
     calculateRatio(nodes);
-    mergeSort(nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio // erro aqui
+    mergeSort(&nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio // erro aqui
     return nodes[0];                         // retornar o nó com maior ratio
 }
 
@@ -42,8 +42,8 @@ void markNeighborsAsVisited(Graph *graph, Node *node)
     Edge *neighborEdge = node->getFirstEdge();
     int neighborId;
     Node *neighbor;
-    int i = 0;
-    do {
+    do
+    {
         neighborId = neighborEdge->getDestinyId();
         neighbor = graph->getNode(neighborId);
         // marcar como visitado
@@ -65,13 +65,14 @@ bool isSolutionComplete(vector<Node*> nodes)
     return true;
 }
 
-vector<Node*> fetchAllNodes(Graph *graph)
+vector<Node *> fetchAllNodes(Graph *graph)
 {
     // iterar sobre os nós do grafo
-    vector<Node*> possibleNodes;
+    vector<Node *> possibleNodes;
     Node *node = graph->getFirstNode();
     Node *newNode = node;
-    do {
+    do
+    {
         newNode = node;
         possibleNodes.push_back(newNode);
         node = node->getNextNode();
@@ -94,9 +95,9 @@ void beginGreedyAlgorithm(Graph *graph)
 {
     // auto nodePosition = -1;
     bool solutionComplete = false;
-    vector<Node*> solution;
+    vector<Node *> solution;
     // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
-    vector<Node*> possibleNodes = fetchAllNodes(graph);
+    vector<Node *> possibleNodes = fetchAllNodes(graph);
     // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
     clearVisitedAndRatio(graph);
 
@@ -109,4 +110,11 @@ void beginGreedyAlgorithm(Graph *graph)
         markNeighborsAsVisited(graph, node);
     } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
     clearVisitedAndRatio(graph);
+    // DONE: imprimir a solução
+    cout << "Solucao:" << endl;
+    for (int i = 0; i < solution.size(); i++)
+    {
+        cout << solution[i]->getId() << " ";
+    }
+    cout << endl;
 }

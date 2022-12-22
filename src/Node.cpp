@@ -61,7 +61,7 @@ bool Node::isVisited()
      return this->visited;
 }
 
-double Node::getRatio()
+float Node::getRatio()
 {
      return this->ratio;
 }
@@ -201,7 +201,7 @@ Edge *Node::searchEdge(int _id)
      return nullptr;
 }
 
-void Node::setRatio(double _ratio)
+void Node::setRatio(float _ratio)
 {
      this->ratio = _ratio;
 }
