@@ -40,14 +40,13 @@ void markNeighborsAsVisited(Graph *graph, Node *node)
     node->setVisited(true);
     // iterar sobre os vizinhos do nó
     Edge *neighborEdge = node->getFirstEdge();
-    int neighborId = neighborEdge->getDestinyId();
-    Node *neighbor = graph->searchNode(neighborId);
+    Node *neighbor = graph->getNode(neighborEdge->getDestinyId());
     while (neighbor != nullptr)
     {
         // marcar como visitado
         neighbor->setVisited(true);
         neighborEdge = neighborEdge->getNextEdge();
-        neighbor = neighborEdge->getDestinyId();
+        neighbor = graph->getNode(neighborEdge->getDestinyId());
     }
 }
 
