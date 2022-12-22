@@ -18,7 +18,7 @@ string getFileName(string txt)
      return str2;
 }
 
-Graph *readFilePartOne(ifstream &input_file, int directed, int isEdgeWeighted, int isNodeWeighted)
+Graph *readFilePartOne(ifstream &input_file, int directed, int isEdgeWeighted, int isNodeWeighted, string firstReading)
 {
 
      // Variáveis para auxiliar na criação dos nós no Grafo
@@ -27,7 +27,14 @@ Graph *readFilePartOne(ifstream &input_file, int directed, int isEdgeWeighted, i
      int order;
 
      // Pegando a ordem do grafo
-     input_file >> order;
+     if (firstReading == "")
+     {
+          input_file >> order;
+     }
+     else
+     {
+          order = stoi(firstReading);
+     }
 
      // Criando objeto grafo
      Graph *graph = new Graph(order, directed, isEdgeWeighted, isNodeWeighted);
@@ -82,10 +89,9 @@ Graph *readFilePartTwo(ifstream &input_file)
      // Variáveis para auxiliar na criação dos nós no Grafo
      string line;
      int order, hasEdge, nodeWeight;
-     float position1, position2;
+     float position;
 
-     // Pega a primeira linha do arquivo:
-     input_file >> line;
+     // A primeira linha já está limpa pelo readFile
 
      // Pegando a ordem do grafo:
      input_file >> order;
@@ -98,8 +104,8 @@ Graph *readFilePartTwo(ifstream &input_file)
      // Pega as posições e faz algo com elas:
      for (int i = 0; i < order; i++)
      {
-          input_file >> position1;
-          input_file >> position2;
+          input_file >> position;
+          input_file >> position;
           graph->insertNode(i);
      }
 
@@ -146,7 +152,7 @@ Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNo
      // Se a primeira linha do arquivo for um numero, é o formato da parte 1
      if (firstLine[0] >= '0' && firstLine[0] <= '9')
      {
-          g = readFilePartOne(input_file, directed, isEdgeWeighted, isNodeWeighted);
+          g = readFilePartOne(input_file, directed, isEdgeWeighted, isNodeWeighted, firstLine);
      }
      else
      {
@@ -213,7 +219,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           // Cria um grafo com as mesmas especificações do G1
-          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode);
+          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode, "");
 
           Graph *graphIntersection_ = new Graph(order, directed, weightedEdge, weightedNode);
 
@@ -250,7 +256,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           // Cria um grafo com as mesmas especificações do G1
-          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode);
+          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode, "");
 
           Graph *graphUnion_ = new Graph(order, directed, weightedEdge, weightedNode);
 
@@ -288,7 +294,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           // Cria um grafo com as mesmas especificações do G1
-          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode);
+          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode, "");
 
           Graph *graphDifference_ = new Graph(order, directed, weightedEdge, weightedNode);
 
