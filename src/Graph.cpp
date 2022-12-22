@@ -518,14 +518,21 @@ void Graph::graphDifference(Graph *G1, Graph *G2)
           x++;
      }
 }
+
+void Graph::TopologicalSorting()
+{
+     
+}
+
 void Graph::PERT()
 {
      // TODO: implementar a Rede PERT
      cout << "Rede PERT" << endl;
      // [x] Verificar se é aciclico (Com busca em profundidade)
-     // [] Implementar Rede PERT
+     // [] Ordenação topológica
+     // Caminho minimo
 
-     vector<int> nodeStart;
+     Node *start, *end = this->getFirstNode();
      int largerNumber = 0;
      Node *node = this->getFirstNode();
      Edge *edge;
@@ -536,10 +543,23 @@ void Graph::PERT()
 
           if (node->getInDegree() == 0 && node->getOutDegree() > 0)
           {
-               nodeStart.push_back(node->getId());
+               start = node;
           }
-          if (node->getId() > largerNumber) // Pegar o maior id para setar o vetor como falso
-               largerNumber = node->getId();
+          if (node->getOutDegree() == 0 && node->getInDegree() > 0)
+          {
+               end = node;
+          }
+          if (start != end)
+          {
+               if ((start->getOutDegree() < node->getOutDegree()) && (node->getInDegree() == 0 && node->getOutDegree() > 0))
+               {
+                    start = node;
+               }
+               if ((start->getInDegree() < node->getInDegree()) && (node->getOutDegree() == 0 && node->getInDegree() > 0))
+               {
+                    end = node;
+               }
+          }
 
           node = node->getNextNode();
      }
@@ -549,7 +569,7 @@ void Graph::PERT()
 
      Node *firstNode = this->getFirstNode();
      bool hasCycle = false;
-     // Verifica se Já encontrou um ciclo ou se acabaram os vertices
+     //  Verifica se Já encontrou um ciclo ou se acabaram os vertices
      while (firstNode != nullptr && !hasCycle)
      {
           hasCycle = this->DFS(firstNode->getId(), visited);
@@ -568,6 +588,9 @@ void Graph::PERT()
                << endl;
           return;
      }
+     // Organização topologica
+
+     // caminho usando dijkstra
 }
 void Graph::fileDot(ofstream &output_file, GraphDOT GDot)
 {
@@ -688,4 +711,13 @@ bool Graph::DFS(int node_id, vector<bool> &visited)
      }
 
      return false;
+}
+
+int Graph::Dijkstra(int origin, int destiny)
+{
+     Node *nodeOrigin = this->getNode(origin);
+     Node *nodeDestiny = this->getNode(destiny);
+
+     bool *visited = new bool[this->order + 1];
+     
 }

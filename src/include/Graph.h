@@ -32,6 +32,8 @@ private:
      Node *firstNode;
      Node *lastNode;
 
+     void TopologicalSorting();
+
 public:
      // Constructor & Destructor
      Graph(int order, bool directed, bool edgeWeighted, bool nodeWeighted);
@@ -65,6 +67,7 @@ public:
      void PERT(); // Rede Pert
 
      bool DFS(int V, vector<bool> &visited);
+     int Dijkstra(int origin, int destiny);
 };
 
 #endif // __GRAPH_H__
