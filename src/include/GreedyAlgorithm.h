@@ -30,13 +30,16 @@ Node randomizedHeuristic(vector<Node> nodes, float alpha)
 
 Node heuristic(vector<Node> nodes)
 {
+    cout << "Calculando ratio..." << endl;
     calculateRatio(nodes);
+    cout << "Ordenando..." << endl;
     mergeSort(nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio
     return nodes[0];                         // retornar o nó com maior ratio
 }
 
 void markNeighborsAsVisited(Graph *graph, Node *node)
 {
+    cout << "Marcando vizinhos como visitados..." << endl;
     node->setVisited(true);
     // iterar sobre os vizinhos do nó
     Edge *neighborEdge = node->getFirstEdge();
@@ -52,6 +55,7 @@ void markNeighborsAsVisited(Graph *graph, Node *node)
 
 bool isSolutionComplete(vector<Node> nodes)
 {
+    cout << "Verificando se a solução está completa..." << endl;
     // iterar sobre o vector
     for (int i = 0; i < nodes.size(); i++)
     {
@@ -71,30 +75,14 @@ vector<Node> fetchAllNodes(Graph *graph)
     Node &newNode = *node;
     while (node != nullptr)
     {
-        // criar um HeuristicNode e adicionar ao vector
-        possibleNodes.push_back(newNode);
+        cout << "Adicionando no" << endl;
+        possibleNodes.push_back(newNode);   // problema esta aqui
+        cout << "Pega proximo no" << endl;
         node = node->getNextNode();
         newNode = *node;
+        cout << "Criando novo no: " << newNode.getId() << endl;
     }
     return possibleNodes;
-}
-
-void beginGreedyAlgorithm(Graph *graph)
-{
-    clearVisitedAndRatio(graph);
-    bool solutionComplete = false;
-    vector<Node> solution;
-    // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
-    vector<Node> possibleNodes = fetchAllNodes(graph);
-    // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
-
-    do
-    {
-        Node node = heuristic(possibleNodes);
-        solution.push_back(node);
-        markNeighborsAsVisited(graph, &node);
-    } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
-    clearVisitedAndRatio(graph);
 }
 
 void clearVisitedAndRatio(Graph *graph)
@@ -106,4 +94,23 @@ void clearVisitedAndRatio(Graph *graph)
         node->setRatio(0);
         node = node->getNextNode();
     }
+}
+
+void beginGreedyAlgorithm(Graph *graph)
+{
+    clearVisitedAndRatio(graph);
+    bool solutionComplete = false;
+    vector<Node> solution;
+    // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
+    vector<Node> possibleNodes = fetchAllNodes(graph);
+    // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
+
+    cout << "Iniciando o loop..." << endl;
+    do
+    {
+        Node node = heuristic(possibleNodes);
+        solution.push_back(node);
+        markNeighborsAsVisited(graph, &node);
+    } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
+    clearVisitedAndRatio(graph);
 }
