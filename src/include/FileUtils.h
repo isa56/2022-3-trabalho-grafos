@@ -125,13 +125,13 @@ Graph *readFilePartTwo(ifstream &input_file)
      {
           for (int j = 0; j < order; j++)
           {
+               input_file >> hasEdge;
+
                // Não insere aresta de um nó para ele mesmo, nem multiarestas
                if (i >= j)
                {
                     continue;
                }
-
-               input_file >> hasEdge;
 
                if (hasEdge == 1)
                {
@@ -385,7 +385,7 @@ int mainMenu(ofstream &output_file, Graph *graph, string input_file_name)
      auto it = find(selectionCheck.begin(), selectionCheck.end(), selection);
      do
      {
-          system("clear");
+          // system("clear");
           selection = menu();
           it = find(selectionCheck.begin(), selectionCheck.end(), selection);
           if (output_file.is_open())

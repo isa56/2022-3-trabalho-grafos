@@ -14,14 +14,14 @@ void swap(Node *a, Node *b)
   *b = temp;
 }
 
-void merge(vector<Node> v, int left, int right, int mid)
+void merge(vector<Node*> v, int left, int right, int mid)
 {
   // Pega as posições iniciais
   int firstSubVector = mid - left + 1;
   int secondSubVector = right - mid;
 
   // cria os novos vetores
-  vector<Node> leftVector, rightVector;
+  vector<Node*> leftVector, rightVector;
 
   // preenche os vetores
   for (int i = 0; i < firstSubVector; i++)
@@ -42,7 +42,7 @@ void merge(vector<Node> v, int left, int right, int mid)
   // compara os elementos dos vetores e os ordena de forma decrescente (maior ratio primeiro)
   while (indexOfFirstSubVector < firstSubVector && indexOfSecondSubVector < secondSubVector)
   {
-    if (leftVector[indexOfFirstSubVector].getRatio() >= rightVector[indexOfSecondSubVector].getRatio())
+    if (leftVector[indexOfFirstSubVector]->getRatio() >= rightVector[indexOfSecondSubVector]->getRatio())
     {
       v[indexOfMergedVector] = leftVector[indexOfFirstSubVector];
       indexOfFirstSubVector++;
@@ -75,7 +75,7 @@ void merge(vector<Node> v, int left, int right, int mid)
   rightVector.clear();
 }
 
-void mergeSort(vector<Node> v, int begin, int end)
+void mergeSort(vector<Node*> v, int begin, int end)
 {
   if (begin >= end)
   {

@@ -4,23 +4,23 @@
 #include "SortingMethods.h"
 using namespace std;
 
-void calculateRatio(vector<Node> nodes)
+void calculateRatio(vector<Node*> nodes)
 {
     for (int i = 0; i < nodes.size(); i++)
     {
         // calcular o ratio
-        double ratio = nodes[i].getDegree() / nodes[i].getNodeWeight();
+        double ratio = nodes[i]->getDegree() / nodes[i]->getNodeWeight();
         // problema: se o nó já foi visitado, o ratio deve ser reduzido pela metade, mas isso será feito todas as vezes que passarmos por aqui
-        if (nodes[i].isVisited())
+        if (nodes[i]->isVisited())
         {
             ratio *= 0.5;
         }
-        nodes[i].setRatio(ratio);
+        nodes[i]->setRatio(ratio);
     }
 }
 
 // WIP: implementar o algoritmo guloso randomizado
-Node randomizedHeuristic(vector<Node> nodes, float alpha)
+Node* randomizedHeuristic(vector<Node*> nodes, float alpha)
 {
     calculateRatio(nodes);
     mergeSort(nodes, 0, (nodes.size() - 1));
@@ -28,38 +28,36 @@ Node randomizedHeuristic(vector<Node> nodes, float alpha)
     return nodes[index];
 }
 
-Node heuristic(vector<Node> nodes)
+Node* heuristic(vector<Node*> nodes)
 {
-    cout << "Calculando ratio..." << endl;
     calculateRatio(nodes);
-    cout << "Ordenando..." << endl;
-    mergeSort(nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio
+    mergeSort(nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio // erro aqui
     return nodes[0];                         // retornar o nó com maior ratio
 }
 
 void markNeighborsAsVisited(Graph *graph, Node *node)
 {
-    cout << "Marcando vizinhos como visitados..." << endl;
     node->setVisited(true);
     // iterar sobre os vizinhos do nó
     Edge *neighborEdge = node->getFirstEdge();
-    Node *neighbor = graph->getNode(neighborEdge->getDestinyId());
-    while (neighbor != nullptr)
-    {
+    int neighborId;
+    Node *neighbor;
+    int i = 0;
+    do {
+        neighborId = neighborEdge->getDestinyId();
+        neighbor = graph->getNode(neighborId);
         // marcar como visitado
         neighbor->setVisited(true);
         neighborEdge = neighborEdge->getNextEdge();
-        neighbor = graph->getNode(neighborEdge->getDestinyId());
-    }
+    } while (neighborEdge != nullptr);
 }
 
-bool isSolutionComplete(vector<Node> nodes)
+bool isSolutionComplete(vector<Node*> nodes)
 {
-    cout << "Verificando se a solução está completa..." << endl;
     // iterar sobre o vector
     for (int i = 0; i < nodes.size(); i++)
     {
-        if (nodes[i].isVisited() == false)
+        if (nodes[i]->isVisited() == false)
         {
             return false;
         }
@@ -67,21 +65,17 @@ bool isSolutionComplete(vector<Node> nodes)
     return true;
 }
 
-vector<Node> fetchAllNodes(Graph *graph)
+vector<Node*> fetchAllNodes(Graph *graph)
 {
     // iterar sobre os nós do grafo
-    vector<Node> possibleNodes;
+    vector<Node*> possibleNodes;
     Node *node = graph->getFirstNode();
-    Node &newNode = *node;
-    while (node != nullptr)
-    {
-        cout << "Adicionando no" << endl;
-        possibleNodes.push_back(newNode);   // problema esta aqui
-        cout << "Pega proximo no" << endl;
+    Node *newNode = node;
+    do {
+        newNode = node;
+        possibleNodes.push_back(newNode);
         node = node->getNextNode();
-        newNode = *node;
-        cout << "Criando novo no: " << newNode.getId() << endl;
-    }
+    } while (node != nullptr);
     return possibleNodes;
 }
 
@@ -98,19 +92,21 @@ void clearVisitedAndRatio(Graph *graph)
 
 void beginGreedyAlgorithm(Graph *graph)
 {
-    clearVisitedAndRatio(graph);
+    // auto nodePosition = -1;
     bool solutionComplete = false;
-    vector<Node> solution;
+    vector<Node*> solution;
     // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
-    vector<Node> possibleNodes = fetchAllNodes(graph);
+    vector<Node*> possibleNodes = fetchAllNodes(graph);
     // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
+    clearVisitedAndRatio(graph);
 
-    cout << "Iniciando o loop..." << endl;
     do
     {
-        Node node = heuristic(possibleNodes);
+        Node *node = heuristic(possibleNodes);
+        auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
         solution.push_back(node);
-        markNeighborsAsVisited(graph, &node);
+        possibleNodes.erase(nodePosition);
+        markNeighborsAsVisited(graph, node);
     } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
     clearVisitedAndRatio(graph);
 }
