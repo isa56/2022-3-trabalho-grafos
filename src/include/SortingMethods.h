@@ -14,24 +14,24 @@ void swap(Node *a, Node *b)
   *b = temp;
 }
 
-void merge(vector<Node*> v, int left, int right, int mid)
+void merge(vector<Node *> *v, int left, int right, int mid)
 {
   // Pega as posições iniciais
   int firstSubVector = mid - left + 1;
   int secondSubVector = right - mid;
 
   // cria os novos vetores
-  vector<Node*> leftVector, rightVector;
+  vector<Node *> leftVector, rightVector;
 
   // preenche os vetores
   for (int i = 0; i < firstSubVector; i++)
   {
-    leftVector.push_back(v[left + i]);
+    leftVector.push_back((*v)[left + i]);
   }
 
   for (int i = 0; i < secondSubVector; i++)
   {
-    rightVector.push_back(v[mid + 1 + i]);
+    rightVector.push_back((*v)[mid + 1 + i]);
   }
 
   // inicia o merge
@@ -44,12 +44,12 @@ void merge(vector<Node*> v, int left, int right, int mid)
   {
     if (leftVector[indexOfFirstSubVector]->getRatio() >= rightVector[indexOfSecondSubVector]->getRatio())
     {
-      v[indexOfMergedVector] = leftVector[indexOfFirstSubVector];
+      (*v)[indexOfMergedVector] = leftVector[indexOfFirstSubVector];
       indexOfFirstSubVector++;
     }
     else
     {
-      v[indexOfMergedVector] = rightVector[indexOfSecondSubVector];
+      (*v)[indexOfMergedVector] = rightVector[indexOfSecondSubVector];
       indexOfSecondSubVector++;
     }
     indexOfMergedVector++;
@@ -58,14 +58,14 @@ void merge(vector<Node*> v, int left, int right, int mid)
   // copia os elementos restantes de cada vetor
   while (indexOfFirstSubVector < firstSubVector)
   {
-    v[indexOfMergedVector] = leftVector[indexOfFirstSubVector];
+    (*v)[indexOfMergedVector] = leftVector[indexOfFirstSubVector];
     indexOfFirstSubVector++;
     indexOfMergedVector++;
   }
 
   while (indexOfSecondSubVector < secondSubVector)
   {
-    v[indexOfMergedVector] = rightVector[indexOfSecondSubVector];
+    (*v)[indexOfMergedVector] = rightVector[indexOfSecondSubVector];
     indexOfSecondSubVector++;
     indexOfMergedVector++;
   }
@@ -75,7 +75,7 @@ void merge(vector<Node*> v, int left, int right, int mid)
   rightVector.clear();
 }
 
-void mergeSort(vector<Node*> v, int begin, int end)
+void mergeSort(vector<Node *> *v, int begin, int end)
 {
   if (begin >= end)
   {
