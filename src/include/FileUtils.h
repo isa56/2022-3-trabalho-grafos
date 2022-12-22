@@ -7,6 +7,7 @@
 #include <string>
 #include "Graph.h"
 #include "Metrics.h"
+#include "GreedyAlgorithm.h"
 
 using namespace std;
 
@@ -165,6 +166,9 @@ char menu()
      cout << "(B) - Grafo União" << endl;
      cout << "(C) - Grafo Diferença" << endl;
      cout << "(D) - Rede Pert" << endl;
+     cout << "(E) - Algoritmo Construtivo Guloso;" << endl;
+     cout << "(F) - Algoritmo Construtivo Guloso Randomizado e Adaptativo;" << endl;
+     cout << "(G) - Algoritmo Construtivo Guloso Randomizado Reativo." << endl;
 
      cout << "(P) - Imprimir a Lista" << endl;
      cout << "(x) - Sair" << endl;
@@ -312,6 +316,24 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
 
           cout << endl;
 
+          // Teste de tempo
+          auto t1 = std::chrono::high_resolution_clock::now();
+          std::chrono::duration<double> delta = t1 - t0;
+          Set_CPUtime(&p, delta.count());
+          cout << "Performace:" << endl;
+          Print_metrics(&p);
+          cout << endl;
+          break;
+     }
+     case 'E': // Algoritmo Guloso
+     {
+          cout << "(E) - Algoritmo Construtivo Guloso" << endl;
+          Metrics p;
+          Setup_metrics(&p);
+          auto t0 = std::chrono::high_resolution_clock::now();
+
+          // Algoritmo
+          beginGreedyAlgorithm(graphG1);
           // Teste de tempo
           auto t1 = std::chrono::high_resolution_clock::now();
           std::chrono::duration<double> delta = t1 - t0;

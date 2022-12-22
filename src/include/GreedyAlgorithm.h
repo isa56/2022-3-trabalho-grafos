@@ -24,29 +24,30 @@ Node randomizedHeuristic(vector<Node> nodes, float alpha)
 {
     calculateRatio(nodes);
     mergeSort(nodes, 0, (nodes.size() - 1));
-    int index = (int) (alpha * nodes.size());
+    int index = (int)(alpha * nodes.size());
     return nodes[index];
 }
 
 Node heuristic(vector<Node> nodes)
 {
     calculateRatio(nodes);
-    mergeSort(nodes, 0, (nodes.size() - 1));    // ordenar o vector de nós por ratio
-    return nodes[0];                            // retornar o nó com maior ratio
+    mergeSort(nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio
+    return nodes[0];                         // retornar o nó com maior ratio
 }
 
-void markNeighborsAsVisited(Node *node)
+void markNeighborsAsVisited(Graph *graph, Node *node)
 {
     node->setVisited(true);
     // iterar sobre os vizinhos do nó
     Edge *neighborEdge = node->getFirstEdge();
-    Node *neighbor = neighborEdge->getDestiny();
+    int neighborId = neighborEdge->getDestinyId();
+    Node *neighbor = graph->searchNode(neighborId);
     while (neighbor != nullptr)
     {
         // marcar como visitado
         neighbor->setVisited(true);
         neighborEdge = neighborEdge->getNextEdge();
-        neighbor = neighborEdge->getDestiny();
+        neighbor = neighborEdge->getDestinyId();
     }
 }
 
@@ -92,7 +93,7 @@ void beginGreedyAlgorithm(Graph *graph)
     {
         Node node = heuristic(possibleNodes);
         solution.push_back(node);
-        markNeighborsAsVisited(&node);
+        markNeighborsAsVisited(graph, &node);
     } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
     clearVisitedAndRatio(graph);
 }
