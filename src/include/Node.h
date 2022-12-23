@@ -52,7 +52,7 @@ public:
      void incrementOutDegree();
      void decrementOutDegree();
 
-     void addEdge(int id, float weightNode);
+     void addEdge(int _destinyId, float weightNode);
      Edge *searchEdge(int id);
      void removeEdge(int id, bool directed, Node *node);
      void removeAllEdges();

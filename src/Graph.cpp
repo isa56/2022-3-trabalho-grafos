@@ -76,12 +76,12 @@ void Graph::insertNode(int _id)
      }
 }
 
-void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
+void Graph::insertEdge(int _originId, int _targetId, float _weightEdge)
 {
      // Se o Nó existe eu so adiciono a aresta
-     if (!this->searchNode(_id))
+     if (!this->searchNode(_originId))
      {
-          this->insertNode(_id);
+          this->insertNode(_originId);
      }
      if (!this->searchNode(_targetId))
      {
@@ -90,7 +90,7 @@ void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
 
      // Insiro aresta do nó id-targetId
 
-     Node *node = this->getNode(_id);
+     Node *node = this->getNode(_originId);
      Node *targetNode = this->getNode(_targetId);
      // cout << "Id: " << node->getId() << " e targetId: " << targetNode->getId() << endl;
      if (targetNode != nullptr && node != nullptr)
@@ -105,7 +105,7 @@ void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
           else
           {
                node->addEdge(_targetId, _weightEdge);
-               targetNode->addEdge(_id, _weightEdge);
+               targetNode->addEdge(_originId, _weightEdge);
                node->incrementDegree();
                targetNode->incrementDegree();
           }
