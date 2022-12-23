@@ -9,8 +9,8 @@ private:
      int id;
      float edgeWeight;
      Edge *nextEdge;
-     int origin;
-     int destiny;
+     int originId;
+     int destinyId;
 
 public:
      Edge(int id);               // Construtor
@@ -20,8 +20,8 @@ public:
      float getEdgeWeight();
      Edge *getNextEdge();
 
-     int getOrigin();
-     int getDestiny();
+     int getOriginId();
+     int getDestinyId();
 
      void setNextEdge(Edge *nexEdge);
      void setEdgeWeight(int edgeWeight);

@@ -1,5 +1,5 @@
-#include "./include/Graph.h"
-#include "./include/Metrics.h"
+#include "include/Graph.h"
+#include "include/Metrics.h"
 #include <cctype>
 #include <fstream>
 #include <iostream>
