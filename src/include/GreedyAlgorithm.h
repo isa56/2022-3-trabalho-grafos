@@ -4,7 +4,7 @@
 #include "SortingMethods.h"
 using namespace std;
 
-void calculateRatio(vector<Node*> nodes)
+void calculateRatio(vector<Node *> nodes)
 {
     for (int i = 0; i < nodes.size(); i++)
     {
@@ -13,14 +13,14 @@ void calculateRatio(vector<Node*> nodes)
         // problema: se o nó já foi visitado, o ratio deve ser reduzido pela metade, mas isso será feito todas as vezes que passarmos por aqui
         if (nodes[i]->isVisited())
         {
-            ratio = ratio * 0.5;
+            ratio = ratio * 0.25;
         }
         nodes[i]->setRatio(ratio);
     }
 }
 
 // WIP: implementar o algoritmo guloso randomizado
-Node *randomizedHeuristic(vector<Node*> nodes, float alpha)
+Node *randomizedHeuristic(vector<Node *> nodes, float alpha)
 {
     calculateRatio(nodes);
     mergeSort(&nodes, 0, (nodes.size() - 1));
@@ -32,16 +32,16 @@ Node *heuristic(vector<Node *> nodes)
 {
     calculateRatio(nodes);
     mergeSort(&nodes, 0, (nodes.size() - 1)); // ordenar o vector de nós por ratio // erro aqui
-    return nodes[0];                         // retornar o nó com maior ratio
+    return nodes[0];                          // retornar o nó com maior ratio
 }
 
 void markNeighborsAsVisited(Graph *graph, Node *node)
 {
+    int neighborId;
+    Node *neighbor;
     node->setVisited(true);
     // iterar sobre os vizinhos do nó
     Edge *neighborEdge = node->getFirstEdge();
-    int neighborId;
-    Node *neighbor;
     do
     {
         neighborId = neighborEdge->getDestinyId();
@@ -52,7 +52,7 @@ void markNeighborsAsVisited(Graph *graph, Node *node)
     } while (neighborEdge != nullptr);
 }
 
-bool isSolutionComplete(vector<Node*> nodes)
+bool isSolutionComplete(vector<Node *> nodes)
 {
     // iterar sobre o vector
     for (int i = 0; i < nodes.size(); i++)
@@ -108,8 +108,11 @@ void beginGreedyAlgorithm(Graph *graph)
         solution.push_back(node);
         possibleNodes.erase(nodePosition);
         markNeighborsAsVisited(graph, node);
-    } while (!possibleNodes.empty() || !isSolutionComplete(possibleNodes)); // definir condicao de parada para solução completa
+        solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
+    } while (solutionComplete == false); // definir condicao de parada para solução completa
+
     clearVisitedAndRatio(graph);
+
     // DONE: imprimir a solução
     cout << "Solucao:" << endl;
     for (int i = 0; i < solution.size(); i++)
