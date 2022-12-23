@@ -20,7 +20,7 @@ void calculateRatio(vector<Node *> nodes)
 }
 
 // WIP: implementar o algoritmo guloso randomizado
-Node *randomizedHeuristic(vector<Node *> nodes, float alpha)
+Node *randomizedAdaptativeHeuristic(vector<Node *> nodes, float alpha)
 {
     calculateRatio(nodes);
     mergeSort(&nodes, 0, (nodes.size() - 1));
@@ -28,6 +28,7 @@ Node *randomizedHeuristic(vector<Node *> nodes, float alpha)
     return nodes[index];
 }
 
+// DONE: implementar o algoritmo guloso
 Node *heuristic(vector<Node *> nodes)
 {
     calculateRatio(nodes);
