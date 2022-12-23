@@ -30,6 +30,14 @@ Edge *Edge::getNextEdge()
 {
      return this->nextEdge;
 }
+int Edge::getOriginId()
+{
+     return this->originId;
+}
+int Edge::getDestinyId()
+{
+     return this->destinyId;
+}
 // Seta o peso na aresta
 void Edge::setEdgeWeight(int _edgeWeight)
 {
