@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <stack>
+#include <queue>
 #include <list>
 #include <chrono>
 #include <time.h>
@@ -32,7 +33,12 @@ private:
      Node *firstNode;
      Node *lastNode;
 
+
      void TopologicalSorting();
+     void MaximumPath(int id_start, int id_end);
+     bool DFS(int V, vector<bool> &visited);
+     int Dijkstra(int origin, int destiny);
+
 
 public:
      // Constructor & Destructor
@@ -59,15 +65,17 @@ public:
      // Criar um arquivo na linguagem “dot” para
      // geração de grafos para no software Graphviz
 
-     void fileDot(ofstream &output_file, GraphDOT GDot);
+     void FileDot(ofstream &output_file, GraphDOT GDot);
 
      void graphIntersection(Graph *G1, Graph *G2);
      void graphUnion(Graph *G1, Graph *G2);
      void graphDifference(Graph *G1, Graph *G2);
      void PERT(); // Rede Pert
 
-     bool DFS(int V, vector<bool> &visited);
-     int Dijkstra(int origin, int destiny);
+     
+     void TopologicalSortUtil(int v, bool visited[],queue<int>& Stack);
+     void MaximumPathUtil(int id_start, int id_end, bool visited[],int path[], int &path_index);
+
 };
 
 #endif // __GRAPH_H__

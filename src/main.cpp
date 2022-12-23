@@ -67,13 +67,14 @@ int main(int argc, char const *argv[])
     return 1;
   }
   // Alguns testes para os argumentos da main
-  cout << "Nome do arquivo .exe! -> " << program_name << endl;
-  cout << "Nome do arquivo de entrada .txt! -> " << input_file_name << endl;
-  cout << "Nome do arquivo de saida .txt! -> " << output_file_name << endl;
+  // cout << "Nome do arquivo .exe! -> " << program_name << endl;
+  // cout << "Nome do arquivo de entrada .txt! -> " << input_file_name << endl;
+  // cout << "Nome do arquivo de saida .txt! -> " << output_file_name << endl;
 
-  cout << "O grafo sera" << ((isOriented == "0") ? " não orientado\n" : " orientado\n");
-  cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
-  cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
+  // cout << "O grafo sera" << ((isOriented == "0") ? " não orientado\n" : " orientado\n");
+  // cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
+  // cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
+  
   graph->~Graph();
   delete graph;
   return 0;

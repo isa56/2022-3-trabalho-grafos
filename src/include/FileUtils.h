@@ -139,7 +139,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
 
           GDot.description = "Grafo Interseção: dados dois grafos G1 = (V1, E1) e G2 = (V2,E2),\n o grafo interseção de G1 com G2 é dado por: G* = (V1 ∩ V2, E1 ∩ E2);";
           GDot.type = "Intersection";
-          graphIntersection_->fileDot(output_file, GDot);
+          graphIntersection_->FileDot(output_file, GDot);
 
           delete graphIntersection_;
           delete graphG2;
@@ -177,7 +177,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           GDot.description = "Grafo União: dados dois grafos G1 = (V1, E1) e G2 = (V2,E2),\n o grafo interseção de G1 com G2 é dado por: G+ = (V1 U V2, E1 U E2);";
           GDot.type = "Union";
 
-          graphUnion_->fileDot(output_file, GDot);
+          graphUnion_->FileDot(output_file, GDot);
 
           delete graphUnion_;
           delete graphG2;
@@ -215,7 +215,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           GDot.description = "Grafo Diferença: dados dois grafos G1 = (V, E1) e G2 = (V,E2),\no grafo diferença de G1 com G2 é dado por: G_ = (V, E1/E2).Note que operador exige que E1 ⊇ E2;";
           GDot.type = "Difference";
 
-          graphDifference_->fileDot(output_file, GDot);
+          graphDifference_->FileDot(output_file, GDot);
 
           delete graphDifference_;
           delete graphG2;
@@ -228,9 +228,10 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           Metrics p;
           Setup_metrics(&p);
           auto t0 = std::chrono::high_resolution_clock::now();
-
+          GDot.description = "Grafo usado na Rede PERT";
+          GDot.type = "Rede_PERT";
           graphG1->PERT();
-
+          graphG1->FileDot(output_file, GDot);
           cout << endl;
 
           // Teste de tempo
@@ -248,7 +249,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           graphG1->printList();
           GDot.description = getFileName(input_file_name);
           GDot.type = "G";
-          graphG1->fileDot(output_file, GDot);
+          graphG1->FileDot(output_file, GDot);
           break;
      }
      case 'X': // Sair;
