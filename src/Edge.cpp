@@ -56,13 +56,3 @@ void Edge::setNextEdge(Edge *_nextEdge)
 {
      this->nextEdge = _nextEdge;
 }
-
-int Edge::getOriginId()
-{
-     return this->originId;
-}
-
-int Edge::getDestinyId()
-{
-     return this->destinyId;
-}
