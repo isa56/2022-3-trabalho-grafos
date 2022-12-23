@@ -147,7 +147,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
      }
      case 'B': // Grafo União
      {
-          cout << "(A) - Grafo Interseção" << endl;
+          cout << "(B) - Grafo União" << endl;
           ifstream input_file;
           Graph *graphG2;
           // Para passar o G2 via cin

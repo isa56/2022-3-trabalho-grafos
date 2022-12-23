@@ -33,12 +33,12 @@ private:
      Node *firstNode;
      Node *lastNode;
 
-
      void TopologicalSorting();
      void MaximumPath(int id_start, int id_end);
      bool DFS(int V, vector<bool> &visited);
      int Dijkstra(int origin, int destiny);
-
+     void TopologicalSortUtil(int v, bool visited[], queue<int> &Stack);
+     void MaximumPathUtil(int id_start, int id_end, bool visited[], int path[], int &path_index);
 
 public:
      // Constructor & Destructor
@@ -71,11 +71,6 @@ public:
      void graphUnion(Graph *G1, Graph *G2);
      void graphDifference(Graph *G1, Graph *G2);
      void PERT(); // Rede Pert
-
-     
-     void TopologicalSortUtil(int v, bool visited[],queue<int>& Stack);
-     void MaximumPathUtil(int id_start, int id_end, bool visited[],int path[], int &path_index);
-
 };
 
 #endif // __GRAPH_H__

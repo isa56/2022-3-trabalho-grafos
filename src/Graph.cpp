@@ -700,34 +700,34 @@ bool Graph::DFS(int node_id, vector<bool> &visited)
 
 void Graph::TopologicalSortUtil(int v, bool visited[], queue<int> &Stack)
 {
-     {
-          // Marca como fisitado
-          visited[v] = true;
+     // Marca como visitado
+     visited[v] = true;
 
-          Node *NodeAux = this->getFirstNode();
-          Edge *EdgeAux = nullptr;
-          int i = 0;
-          if (NodeAux->getId() == v)
-          {
-               EdgeAux = NodeAux->getFirstEdge();
-          }
-          else
-          {
-               while (NodeAux->getNextNode()->getId() != v && NodeAux->getNextNode() != nullptr)
-               {
-                    i++;
-                    NodeAux = NodeAux->getNextNode();
-               }
-               EdgeAux = NodeAux->getFirstEdge();
-          }
-          while (EdgeAux != nullptr) // Percorre todas as arestas 
-          {
-               if (!visited[i])
-                    TopologicalSortUtil(i, visited, Stack);
-               EdgeAux = EdgeAux->getNextEdge();
-          }
-          Stack.push(v);
+     Node *NodeAux = this->getFirstNode();
+     Edge *EdgeAux = nullptr;
+     int i = 0;
+     if (NodeAux->getId() == v)
+     {
+          EdgeAux = NodeAux->getFirstEdge();
      }
+     else
+     {
+          while (NodeAux->getNextNode() != nullptr && NodeAux->getNextNode()->getId() != v)
+          {
+               i++;
+               NodeAux = NodeAux->getNextNode();
+          }
+          EdgeAux = NodeAux->getFirstEdge();
+     }
+     while (EdgeAux != nullptr) // Percorre todas as arestas
+     {
+          if (!visited[i])
+          {
+               TopologicalSortUtil(i, visited, Stack);
+          }
+          EdgeAux = EdgeAux->getNextEdge();
+     }
+     Stack.push(v);
 }
 
 void Graph::TopologicalSorting()
@@ -736,11 +736,17 @@ void Graph::TopologicalSorting()
 
      bool *visited = new bool[this->order];
      for (int i = 0; i < this->order; i++)
+     {
           visited[i] = false;
+     }
 
      for (int i = 0; i < this->order; i++)
+     {
           if (visited[i] == false)
+          {
                TopologicalSortUtil(i, visited, Stack);
+          }
+     }
 
      while (Stack.empty() == false)
      {
@@ -767,7 +773,7 @@ void Graph::MaximumPath(int id_start, int id_end)
      // cout << "Tempo de produção: " << maxPath << endl;
 }
 
-void Graph::MaximumPathUtil(int id_start, int id_end,  bool visited[], int path[], int &path_i)
+void Graph::MaximumPathUtil(int id_start, int id_end, bool visited[], int path[], int &path_i)
 {
      visited[id_start] = true;
      path[path_i] = id_start;
@@ -781,9 +787,8 @@ void Graph::MaximumPathUtil(int id_start, int id_end,  bool visited[], int path[
                cout << path[i] << " ";
                max_aux += this->getNode(path[i])->searchEdge(path[i + 1])->getEdgeWeight();
           }
-     
+
           cout << "  -> E o tempo eh ->" << max_aux << endl;
-             
      }
      else
      {
@@ -804,6 +809,7 @@ void Graph::MaximumPathUtil(int id_start, int id_end,  bool visited[], int path[
 
 int Graph::Dijkstra(int origin, int destiny)
 {
+     // o problema eh acessar a posicao do vetor de acordo com o id do vertice
      Node *nodeOrigin = this->getNode(origin);
      Node *nodeDestiny = this->getNode(destiny);
      // int length = (this->order + 1) * 10;
@@ -811,6 +817,7 @@ int Graph::Dijkstra(int origin, int destiny)
      bool *visited = new bool[length];
      int *range = new int[length];
      int *path = new int[length];
+     int value;
      Node *auxNode = nullptr;
      Edge *auxEdge = nullptr;
 
@@ -875,5 +882,11 @@ int Graph::Dijkstra(int origin, int destiny)
                }
           }
      }
-     return range[destiny];
+     value = range[destiny];
+
+     delete[] range;
+     delete[] path;
+     delete[] visited;
+
+     return value;
 }
