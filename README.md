@@ -2,18 +2,18 @@
 
 ## Sumário
 
-| Tópico                                                                          |
-| ------------------------------------------------------------------------------- |
-| [Integrantes do Grupo](#integrantes-do-grupo-id-4)                              |
-| [Descrição do Projeto](#descrição-do-projeto)                                   |
-| [Instruções de Compilação e Execução](#instruções-de-compilação-e-execução)     |
+| Tópico                                                |
+| ----------------------------------------------------- |
+| [Integrantes do Grupo](#integrantes-do-grupo-id-21)    |
+| [Descrição do Projeto](#descrição-do-projeto)         |
+| [Instruções de Compilação e Execução](#instruções-de-compilação-e-execução)         |
 | [Documentação e Referências Utilizadas](#documentação-e-referências-utilizadas) |
 | [Observações para o Grupo](#observações-para-o-grupo)                           |
 
 ---
 
-## Integrantes do Grupo (ID 4)
-- [Alice do Valle](https://github.com/alicedovalle);
+## Integrantes do Grupo (ID 21)
+- [Eduardo Araujo](https://github.com/eduardonascimentojf);
 - [Isadora Ferreira](https://github.com/isa56);
 - [Miguel Sales](https://github.com/salesmiguelz).
 
@@ -50,7 +50,16 @@ Para conseguir rodar o programa, é necessário ter instalados o [Git](https://g
     ./<execGrupo21.exe> <arquivo_entrada> <arquivo_saida> <Opc_Direc> <Opc_Peso_Aresta> <Opc_Peso_Nos>
   ```
 
+    i. Gerar o arquivo executável  `.exe`:
+      ```bash
+     g++ -o execGrupo21.exe  src/*.cpp
+      ```
 
+
+    ii. executar o arquivo `main`:
+      ```bash
+      ./execGrupo21.exe teste.txt testeS.txt 0 1 0
+      ```
 [↑ Sumário](#sumário)
 
 ---
