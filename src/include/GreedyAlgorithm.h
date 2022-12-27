@@ -24,8 +24,14 @@ Node *randomizedAdaptativeHeuristic(vector<Node *> nodes, float alpha)
 {
     calculateRatio(nodes);
     mergeSort(&nodes, 0, (nodes.size() - 1));
-    int index = (int)(alpha * nodes.size());
-    return nodes[index];
+
+    int firstIndex = ((alpha)*276);
+
+    int index = (rand() % (firstIndex - 0 + 1) + 0);
+
+    cout << "firstIndex" << firstIndex;
+    cout << "index" << index;
+    // return nodes[index];
 }
 
 // DONE: implementar o algoritmo guloso
@@ -105,6 +111,37 @@ void beginGreedyAlgorithm(Graph *graph)
     do
     {
         Node *node = heuristic(possibleNodes);
+        auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
+        solution.push_back(node);
+        possibleNodes.erase(nodePosition);
+        markNeighborsAsVisited(graph, node);
+        solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
+    } while (solutionComplete == false); // definir condicao de parada para solução completa
+
+    clearVisitedAndRatio(graph);
+
+    // DONE: imprimir a solução
+    cout << "Solucao:" << endl;
+    for (int i = 0; i < solution.size(); i++)
+    {
+        cout << solution[i]->getId() << " ";
+    }
+    cout << endl;
+}
+
+void beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
+{
+    // auto nodePosition = -1;
+    bool solutionComplete = false;
+    vector<Node *> solution;
+    // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
+    vector<Node *> possibleNodes = fetchAllNodes(graph);
+    // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
+    clearVisitedAndRatio(graph);
+
+    do
+    {
+        Node *node = randomizedAdaptativeHeuristic(possibleNodes, alpha);
         auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
         solution.push_back(node);
         possibleNodes.erase(nodePosition);

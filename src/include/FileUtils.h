@@ -350,6 +350,47 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           cout << endl;
           break;
      }
+     case 'F':
+     {
+          cout << "(F) - Algoritmo construtivo guloso randomizado e adaptativo" << endl;
+          Metrics p;
+          Setup_metrics(&p);
+
+          float alpha;
+          int iterNumber;
+          std::chrono::duration<double> bestSolution;
+
+          // Escolha do valor do alpha
+          cout << "Digite o valor do alfa a ser utilizado no algoritmo: ({0.05, 0.10, 0.15, 0.30, 0,50})" << endl;
+          cin >> alpha;
+
+          // Escolha do valor da quantidade de iterações
+          cout << "Digite a quantidade de iterações: " << endl;
+          cin >> iterNumber;
+          // Algoritmo
+
+          for (int i = 0; i < iterNumber; i++)
+          {
+               auto t0 = std::chrono::high_resolution_clock::now();
+               beginRandomizedAdaptativeAlgorithm(graphG1, alpha);
+               // Teste de tempo
+               auto t1 = std::chrono::high_resolution_clock::now();
+               std::chrono::duration<double> delta = t1 - t0;
+
+               // Caso seja a primeira vez que o loop está rodando, ele vai setar a melhor solução como a primeira
+               if (delta < bestSolution || i == 0)
+               {
+                    bestSolution = delta;
+               }
+          }
+
+          cout << "cheguei aqui";
+          Set_CPUtime(&p, bestSolution.count());
+          cout << "Performace:" << endl;
+          Print_metrics(&p);
+          cout << endl;
+          break;
+     }
      case 'P': // Imprimir o Grafo
      {
           cout << "(P) - Imprimir a Lista" << endl;
