@@ -1,0 +1,48 @@
+16 95 64 13 82 81 22 33 51 86 68 28 31 66 70 37 65 26 88 
+57 14 62 38 55 29 20 85 47 44 19 56
+Performace: 0.0030317 segundos
+Foi usado o Algoritmo Guloso
+
+13 64 82 81 52 33 41 9 31 25 66 37 65 88 14 8 38 75 20 85 
+47 43 78 16 95 54 53 7 19 56 22 15 98 
+Performace: 0.0031487
+Alfa: 0.05 e interaçoes: 500
+Foi usado o Algoritmo Guloso randomizado e adaptativo
+
+
+19 22 33 51 86 68 28 31 12 66 50 35 65 30 88 14 73 62 34 29 
+20 93 47 16 64 13 7 56 82 91 52 8 85 95 42 81 
+Performace: 0.0033637
+Alfa: 0.1 e interaçoes: 500
+Foi usado o Algoritmo Guloso randomizado e adaptativo
+
+
+81 95 64 13 82 52 33 22 36 28 31 66 50 37 20 85 2 16 54 7 
+19 78 24 60 15 98 51 14 1 56 41 59 86 68 6 11 25 45 
+Performace: 0.0035083
+Alfa: 0.15 e interaçoes: 500
+Foi usado o Algoritmo Guloso randomizado e adaptativo
+
+
+33 64 13 82 35 4 62 51 59 9 28 49 34 55 75 87 48 1 60 95 
+44 76 29 20 19 81 52 56 71 86 36 46 50 69 45 12 74 16 96 68 
+58 85 
+Performace: 0.00375
+Alfa: 0.3 e interaçoes: 500
+Foi usado o Algoritmo Guloso randomizado e adaptativo
+
+
+13 80 49 11 32 25 74 8 34 43 92 20 85 40 64 55 5 69 0 28 
+6 71 22 78 60 68 58 41 86 9 31 17 12 27 23 1 95 16 53 97 
+57 56 
+Performace: 0.0037431
+Alfa: 0.5 e interaçoes: 500
+Foi usado o Algoritmo Guloso randomizado e adaptativo
+
+
+8 80 84 31 42 36 53 93 91 69 52 14 94 27 72 67 21 79 59 13 
+26 74 60 48 16 45 32 29 22 2 4 41 28 44 58 82 64 54 76 24 
+57 37 6 92 39 77 19 7 65 95 86 66 23 43 35 68 40 55 9 81 
+Performace: 0.0048607
+Alfa: 1 e interaçoes: 500
+Foi usado o Algoritmo Guloso randomizado e adaptativo

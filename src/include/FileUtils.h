@@ -364,29 +364,42 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           cout << "Digite o valor do alfa a ser utilizado no algoritmo: ({0.05, 0.10, 0.15, 0.30, 0,50})" << endl;
           cin >> alpha;
 
-          // Escolha do valor da quantidade de iterações
-          cout << "Digite a quantidade de iterações: " << endl;
-          cin >> iterNumber;
-          // Algoritmo
+          // // Escolha do valor da quantidade de iterações
+          // cout << "Digite a quantidade de iterações: " << endl;
+          // // cin >> iterNumber;
+          // // Algoritmo
 
+          vector<Node *> teste;
+
+          iterNumber = 500;
           for (int i = 0; i < iterNumber; i++)
           {
                auto t0 = std::chrono::high_resolution_clock::now();
-               beginRandomizedAdaptativeAlgorithm(graphG1, alpha);
+               teste = beginRandomizedAdaptativeAlgorithm(graphG1, alpha);
                // Teste de tempo
                auto t1 = std::chrono::high_resolution_clock::now();
                std::chrono::duration<double> delta = t1 - t0;
 
                // Caso seja a primeira vez que o loop está rodando, ele vai setar a melhor solução como a primeira
-               if (delta < bestSolution || i == 0)
+               if (i == 0)
+                    bestSolution = delta;
+               if (delta < bestSolution)
                {
                     bestSolution = delta;
                }
+               Set_CPUtime(&p, delta.count());
+               cout << i + 1 << "°) Performace de Delta:" << endl;
+               Print_metrics(&p);
           }
-
-          cout << "cheguei aqui";
+          for (size_t i = 0; i < teste.size(); i++)
+          {
+               if (i % 20 == 0)
+                    output_file << endl;
+               output_file << teste[i]->getId() << " ";
+          }
           Set_CPUtime(&p, bestSolution.count());
-          cout << "Performace:" << endl;
+          output_file << "\nPerformace: " << p.time << endl;
+          output_file << "Alfa: " << alpha << " e interaçoes: " << iterNumber << endl;
           Print_metrics(&p);
           cout << endl;
           break;
@@ -423,11 +436,11 @@ int mainMenu(ofstream &output_file, Graph *graph, string input_file_name)
 {
      // Verifica se as a pessoa digitou uma opção valida
      char selection = '1';
-     vector<char> selectionCheck = {'A', 'B', 'C', 'D', 'E', 'P', 'X'};
+     vector<char> selectionCheck = {'A', 'B', 'C', 'D', 'E', 'F', 'P', 'X'};
      auto it = find(selectionCheck.begin(), selectionCheck.end(), selection);
      do
      {
-          // system("clear");
+          system("clear");
           selection = menu();
           it = find(selectionCheck.begin(), selectionCheck.end(), selection);
           if (output_file.is_open())

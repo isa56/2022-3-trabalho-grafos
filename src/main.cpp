@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
   ifstream input_file;
   ofstream output_file;
   input_file.open(input_file_name, ios::in);
-  output_file.open(output_file_name, ios::out); //| ios::trun
+  output_file.open(output_file_name, ios::app); //| ios::trun
 
   if (!input_file.is_open())
   {
@@ -74,7 +74,7 @@ int main(int argc, char const *argv[])
   // cout << "O grafo sera" << ((isOriented == "0") ? " não orientado\n" : " orientado\n");
   // cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
   // cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
-  
+
   graph->~Graph();
   delete graph;
   return 0;
