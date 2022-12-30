@@ -1,14 +1,22 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
+#include <climits>
 #include "Graph.h"
+#include "random.h"
 #include "SortingMethods.h"
+
 using namespace std;
 
 void calculateRatio(vector<Node *> nodes)
 {
     for (int i = 0; i < nodes.size(); i++)
     {
+        if (nodes[i]->getDegree() == 0)
+        {
+            nodes[i]->setRatio(0);
+            continue;
+        }
         // calcular o ratio
         float ratio = (nodes[i]->getDegree() / (float)(nodes[i]->getNodeWeight()));
         // problema: se o nó já foi visitado, o ratio deve ser reduzido pela metade, mas isso será feito todas as vezes que passarmos por aqui
@@ -22,13 +30,19 @@ void calculateRatio(vector<Node *> nodes)
 // Gera um número aleatório de 0 ate a 'porcentagem' de alpha em node
 int RandomNumberGeneration(float alpha, int sizeNode)
 {
-    srand((unsigned)time(NULL));
-    int range = alpha * sizeNode;
+    // srand((unsigned)time(NULL));
+    int range = ((float)alpha * sizeNode);
     if (range < 1) // Para nunca tentar difidir por 0
         range = 1;
-    int random = rand() % range;
+    int rand = xrandomRange(0, INT_MAX);
+    // cout << "RAND: " << ran << endl;
+    int random = (rand % range);
     return random;
 }
+
+/*Node *randomizedReactiveHeuristic(vector<Node *> nodes, float alpha)
+{}*/
+
 // WIP: implementar o algoritmo guloso randomizado
 Node *randomizedAdaptativeHeuristic(vector<Node *> nodes, float alpha)
 {
@@ -81,7 +95,7 @@ vector<Node *> fetchAllNodes(Graph *graph)
     // iterar sobre os nós do grafo
     vector<Node *> possibleNodes;
     Node *node = graph->getFirstNode();
-    Node *newNode = node;
+    Node *newNode;
     do
     {
         newNode = node;
