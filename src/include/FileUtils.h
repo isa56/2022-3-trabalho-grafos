@@ -340,7 +340,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           auto t0 = std::chrono::high_resolution_clock::now();
 
           // Algoritmo
-          beginGreedyAlgorithm(graphG1);
+          beginGreedyAlgorithm(graphG1, output_file);
           // Teste de tempo
           auto t1 = std::chrono::high_resolution_clock::now();
           std::chrono::duration<double> delta = t1 - t0;
@@ -348,6 +348,10 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           cout << "Performace:" << endl;
           Print_metrics(&p);
           cout << endl;
+
+          output_file << "\nPerformace: " << p.time << endl;
+          output_file << "Foi usado o Algoritmo Guloso usando o arquivo "
+                      << input_file_name << endl;
           break;
      }
      case 'F':
@@ -358,48 +362,75 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
 
           float alpha;
           int iterNumber;
-          std::chrono::duration<double> bestSolution;
+          int bestSolutionSize;
+          std::chrono::duration<double> bestSolutionTime;
 
           // Escolha do valor do alpha
           cout << "Digite o valor do alfa a ser utilizado no algoritmo: ({0.05, 0.10, 0.15, 0.30, 0,50})" << endl;
           cin >> alpha;
+          while (alpha > 1 || alpha <= 0)
+          // Alfa nunca pode ser maior que 1 ou menor 0 ou  0 pois
+          // ele pode (e muito provavel que deve) tentar acessar uma posição invalida do vetor!
+          {
+               cout << "Alfa invalido!" << endl;
+               cout << "Digite o valor do alfa a ser utilizado no algoritmo: ({0.05, 0.10, 0.15, 0.30, 0,50})" << endl;
+               cin >> alpha;
+          }
 
           // // Escolha do valor da quantidade de iterações
           // cout << "Digite a quantidade de iterações: " << endl;
           // // cin >> iterNumber;
           // // Algoritmo
 
-          vector<Node *> teste;
+          vector<Node *> vectorNode;
 
           iterNumber = 500;
           for (int i = 0; i < iterNumber; i++)
           {
                auto t0 = std::chrono::high_resolution_clock::now();
-               teste = beginRandomizedAdaptativeAlgorithm(graphG1, alpha);
+               vectorNode = beginRandomizedAdaptativeAlgorithm(graphG1, alpha);
                // Teste de tempo
                auto t1 = std::chrono::high_resolution_clock::now();
                std::chrono::duration<double> delta = t1 - t0;
 
                // Caso seja a primeira vez que o loop está rodando, ele vai setar a melhor solução como a primeira
                if (i == 0)
-                    bestSolution = delta;
-               if (delta < bestSolution)
                {
-                    bestSolution = delta;
+                    bestSolutionTime = delta;
+                    bestSolutionSize = vectorNode.size();
                }
-               Set_CPUtime(&p, delta.count());
-               cout << i + 1 << "°) Performace de Delta:" << endl;
-               Print_metrics(&p);
+               // if (delta < bestSolutionTime) // Pega sempre o menor tempo
+               // {
+               //      bestSolutionTime = delta;
+               //      bestSolutionSize = vectorNode.size();
+               // }
+               if (vectorNode.size() < bestSolutionSize) // Pega o menor tamanho de vetor
+               {
+                    bestSolutionSize = vectorNode.size();
+                    bestSolutionTime = delta;
+               }
+               // // Caso queira visualizar o tempo de cada interação
+               // Set_CPUtime(&p, delta.count());
+               // cout << i + 1 << "°) Performace de Delta:" << endl;
+               // Print_metrics(&p);
           }
-          for (size_t i = 0; i < teste.size(); i++)
+          output_file << "Solucao: ";
+          cout << "Solucao: " << endl;
+          for (size_t i = 0; i < vectorNode.size(); i++)
           {
-               if (i % 20 == 0)
+               if (i % 20 == 0 && i >= 20)
                     output_file << endl;
-               output_file << teste[i]->getId() << " ";
+               output_file << vectorNode[i]->getId() << " ";
+               cout << vectorNode[i]->getId() << " ";
           }
-          Set_CPUtime(&p, bestSolution.count());
-          output_file << "\nPerformace: " << p.time << endl;
+          Set_CPUtime(&p, bestSolutionTime.count());
+          output_file << "\nA solução tem " << bestSolutionSize << " vertices" << endl;
+          output_file << "Performace: " << p.time << endl;
           output_file << "Alfa: " << alpha << " e interaçoes: " << iterNumber << endl;
+          output_file << "Foi usado o Algoritmo Guloso randomizado e adaptativo usando o arquivo "
+                      << input_file_name << endl;
+          cout << endl;
+          cout << "Performace:" << endl;
           Print_metrics(&p);
           cout << endl;
           break;

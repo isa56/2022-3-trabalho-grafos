@@ -5,6 +5,7 @@
 #include "Graph.h"
 #include "random.h"
 #include "SortingMethods.h"
+#include <limits.h>
 
 using namespace std;
 
@@ -30,12 +31,10 @@ void calculateRatio(vector<Node *> nodes)
 // Gera um número aleatório de 0 ate a 'porcentagem' de alpha em node
 int RandomNumberGeneration(float alpha, int sizeNode)
 {
-    // srand((unsigned)time(NULL));
     int range = ((float)alpha * sizeNode);
     if (range < 1) // Para nunca tentar difidir por 0
         range = 1;
-    int rand = xrandomRange(0, INT_MAX);
-    // cout << "RAND: " << ran << endl;
+    int rand = xrandomRange(0, (short)INT_MAX);
     int random = (rand % range);
     return random;
 }
@@ -116,7 +115,7 @@ void clearVisitedAndRatio(Graph *graph)
     }
 }
 
-void beginGreedyAlgorithm(Graph *graph)
+void beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
 {
     // auto nodePosition = -1;
     bool solutionComplete = false;
@@ -140,10 +139,15 @@ void beginGreedyAlgorithm(Graph *graph)
 
     // DONE: imprimir a solução
     cout << "Solucao:" << endl;
+    output_file << "Solucao: ";
     for (int i = 0; i < solution.size(); i++)
     {
         cout << solution[i]->getId() << " ";
+        output_file << solution[i]->getId() << " ";
+        if (i % 20 == 0 && i >= 20)
+            output_file << endl;
     }
+    output_file << "\nA solução tem " << solution.size() << " vertices";
     cout << endl;
 }
 
@@ -170,23 +174,24 @@ vector<Node *> beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
     clearVisitedAndRatio(graph);
 
     // DONE: imprimir a solução
-    cout << "Solucao:" << endl;
-    for (int i = 0; i < solution.size(); i++)
-    {
-        cout << solution[i]->getId() << " ";
-    }
-    cout << endl;
+    // cout << "Solucao:" << endl;
+    // for (int i = 0; i < solution.size(); i++)
+    // {
+    //     cout << solution[i]->getId() << " ";
+    // }
+    // cout << endl;
+
     return solution;
 }
 
 void beginRandomReactiveAlgorithm(Graph *graph)
 {
+    vector<Node *> solution, solutionAux;
     vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
-    // auto nodePosition = -1;
+    vector<float> solutionbest;
+    int blockSize = 250;
     bool solutionComplete = false;
-    vector<Node *> solution;
-    vector<Node *> solutionAux;
-    // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
+
     vector<Node *> possibleNodes = fetchAllNodes(graph);
     // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
     clearVisitedAndRatio(graph);
@@ -210,10 +215,10 @@ void beginRandomReactiveAlgorithm(Graph *graph)
     clearVisitedAndRatio(graph);
 
     // DONE: imprimir a solução
-    cout << "Solucao:" << endl;
-    for (int i = 0; i < solution.size(); i++)
-    {
-        cout << solution[i]->getId() << " ";
-    }
-    cout << endl;
+    // cout << "Solucao:" << endl;
+    // for (int i = 0; i < solution.size(); i++)
+    // {
+    //     cout << solution[i]->getId() << " ";
+    // }
+    // cout << endl;
 }
