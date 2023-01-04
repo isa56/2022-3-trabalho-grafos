@@ -11,6 +11,16 @@
 
 using namespace std;
 
+int findTotalWeight(vector<Node *> nodes)
+{
+     int total = 0;
+     for (int i = 0; i < nodes.size(); i++)
+     {
+          total += nodes[i]->getNodeWeight();
+     }
+     return total;
+}
+
 string getFileName(string txt)
 {
      size_t pos = txt.find_last_of("/");
@@ -339,19 +349,31 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           Setup_metrics(&p);
           auto t0 = std::chrono::high_resolution_clock::now();
 
-          // Algoritmo
-          beginGreedyAlgorithm(graphG1, output_file);
+          output_file << "\n-----\nAlgoritmo Construtivo Guloso\n---";
+          output_file << "\nArquivo: " << input_file_name << "\n";
+
+          // Executa algoritmo
+          vector<Node *> solution = beginGreedyAlgorithm(graphG1, output_file);
+
+          // Pega tamanho total:
+          int solutionSize = solution.size();
+          cout << "Tamanho da solução: " << solutionSize << endl;
+
+          // Pega peso total:
+          int solutionTotalWeight = findTotalWeight(solution);
+          cout << "Peso total da solução: " << solutionTotalWeight << endl;
+
           // Teste de tempo
           auto t1 = std::chrono::high_resolution_clock::now();
           std::chrono::duration<double> delta = t1 - t0;
+
           Set_CPUtime(&p, delta.count());
-          cout << "Performace:" << endl;
+          cout << "Duração da solução:" << endl;
           Print_metrics(&p);
           cout << endl;
 
-          output_file << "\nPerformace: " << p.time << endl;
-          output_file << "Foi usado o Algoritmo Guloso usando o arquivo "
-                      << input_file_name << endl;
+          output_file << "\nPeso total da solução: " << solutionTotalWeight;
+          output_file << "\nTempo total: " << p.time << "s\n-----\n";
           break;
      }
      case 'F':
@@ -361,8 +383,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           Setup_metrics(&p);
 
           float alpha;
-          int iterNumber;
-          int bestSolutionSize;
+          int iterNumber, bestSolutionSize, bestSolutionWeight;
           std::chrono::duration<double> bestSolutionTime;
 
           // Escolha do valor do alpha
@@ -377,12 +398,11 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
                cin >> alpha;
           }
 
-          // // Escolha do valor da quantidade de iterações
-          // cout << "Digite a quantidade de iterações: " << endl;
-          // // cin >> iterNumber;
-          // // Algoritmo
-
           vector<Node *> vectorNode;
+
+          output_file << "\n-----\nAlgoritmo Construtivo Guloso Randomizado e Adaptativo\n---";
+          output_file << "\nArquivo: " << input_file_name;
+          output_file << "\nAlfa: " << alpha;
 
           iterNumber = 500;
           for (int i = 0; i < iterNumber; i++)
@@ -398,24 +418,18 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
                {
                     bestSolutionTime = delta;
                     bestSolutionSize = vectorNode.size();
+                    bestSolutionWeight = findTotalWeight(vectorNode);
                }
-               // if (delta < bestSolutionTime) // Pega sempre o menor tempo
-               // {
-               //      bestSolutionTime = delta;
-               //      bestSolutionSize = vectorNode.size();
-               // }
                if (vectorNode.size() < bestSolutionSize) // Pega o menor tamanho de vetor
                {
+                    bestSolutionWeight = findTotalWeight(vectorNode);
                     bestSolutionSize = vectorNode.size();
                     bestSolutionTime = delta;
                }
-               // // Caso queira visualizar o tempo de cada interação
-               // Set_CPUtime(&p, delta.count());
-               // cout << i + 1 << "°) Performace de Delta:" << endl;
-               // Print_metrics(&p);
           }
-          output_file << "Solucao: ";
-          cout << "Solucao: " << endl;
+
+          output_file << "\nSolucao: ";
+          cout << "\nSolucao: " << endl;
           for (size_t i = 0; i < vectorNode.size(); i++)
           {
                if (i % 20 == 0 && i >= 20)
@@ -423,15 +437,21 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
                output_file << vectorNode[i]->getId() << " ";
                cout << vectorNode[i]->getId() << " ";
           }
+
           Set_CPUtime(&p, bestSolutionTime.count());
-          output_file << "\nA solução tem " << bestSolutionSize << " vertices" << endl;
-          output_file << "Performace: " << p.time << endl;
-          output_file << "Alfa: " << alpha << " e interaçoes: " << iterNumber << endl;
-          output_file << "Foi usado o Algoritmo Guloso randomizado e adaptativo usando o arquivo "
-                      << input_file_name << endl;
-          cout << endl;
-          cout << "Performace:" << endl;
-          Print_metrics(&p);
+
+          output_file << "\nA solução tem " << bestSolutionSize << " vertices";
+          cout << "\nA solução tem " << bestSolutionSize << " vertices";
+
+          output_file << "\nPeso total da solução: " << bestSolutionWeight;
+          cout << "\nPeso total da solução: " << bestSolutionWeight;
+
+          output_file << "\nPerformace: " << p.time << "s";
+          cout << "\nPerformace: " << p.time << "s";
+
+          output_file << "\nNumero de iteraçoes: " << iterNumber << endl;
+          cout << "\nNumero de iteracoes: " << iterNumber << endl;
+
           cout << endl;
           break;
      }
