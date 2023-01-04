@@ -115,7 +115,7 @@ void clearVisitedAndRatio(Graph *graph)
     }
 }
 
-void beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
+vector<Node *> beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
 {
     // auto nodePosition = -1;
     bool solutionComplete = false;
@@ -149,6 +149,7 @@ void beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
     }
     output_file << "\nA solução tem " << solution.size() << " vertices";
     cout << endl;
+    return solution;
 }
 
 vector<Node *> beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
