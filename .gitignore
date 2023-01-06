@@ -63,4 +63,5 @@
 
 output/*.txt
 output/*.dot
+output/*.dot.svg
 input/*
