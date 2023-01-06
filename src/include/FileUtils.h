@@ -16,7 +16,7 @@ int findTotalWeight(vector<Node *> nodes)
      int total = 0;
      for (int i = 0; i < nodes.size(); i++)
      {
-          total += nodes[i]->getNodeWeight();
+          total = total + nodes[i]->getNodeWeight();
      }
      return total;
 }
@@ -116,7 +116,6 @@ Graph *readFilePartTwo(ifstream &input_file)
      {
           input_file >> position;
           input_file >> position;
-          graph->insertNode(i);
      }
 
      // Pega o texto dos pesos:
@@ -124,6 +123,8 @@ Graph *readFilePartTwo(ifstream &input_file)
      // Pega os pesos e adiciona aos nós:
      for (int i = 0; i < order; i++)
      {
+          graph->insertNode(i);
+
           input_file >> nodeWeight;
           graph->getNode(i)->setNodeWeight(nodeWeight);
      }
@@ -197,6 +198,7 @@ char menu()
 
 void selecionar(char selection, Graph *graphG1, ofstream &output_file, string input_file_name)
 {
+     system("clear");
      int order = graphG1->getOrder();
      bool directed, weightedEdge, weightedNode;
      directed = graphG1->isDirected();
