@@ -28,19 +28,53 @@ void calculateRatio(vector<Node *> nodes)
         nodes[i]->setRatio(ratio);
     }
 }
+
+vector<Node *> fetchAllNodes(Graph *graph)
+{
+    // iterar sobre os nós do grafo
+    vector<Node *> possibleNodes;
+    Node *node = graph->getFirstNode();
+    Node *newNode;
+    do
+    {
+        newNode = node;
+        possibleNodes.push_back(newNode);
+        node = node->getNextNode();
+    } while (node != nullptr);
+    return possibleNodes;
+}
+
+void clearVisitedAndRatio(Graph *graph)
+{
+    Node *node = graph->getFirstNode();
+    while (node != nullptr)
+    {
+        node->setVisited(false);
+        node->setRatio(0);
+        node = node->getNextNode();
+    }
+}
+
 // Gera um número aleatório de 0 ate a 'porcentagem' de alpha em node
 int RandomNumberGeneration(float alpha, int sizeNode)
 {
     int range = ((float)alpha * sizeNode);
-    if (range < 1) // Para nunca tentar difidir por 0
+    if (range < 1) // Para nunca tentar dividir por 0
         range = 1;
     int rand = xrandomRange(0, (short)INT_MAX);
     int random = (rand % range);
     return random;
 }
 
-/*Node *randomizedReactiveHeuristic(vector<Node *> nodes, float alpha)
-{}*/
+int findTotalWeight(vector<Node *> nodes)
+{
+    int total = 0;
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        total = total + nodes[i]->getNodeWeight();
+    }
+    return total;
+}
 
 // WIP: implementar o algoritmo guloso randomizado
 Node *randomizedAdaptativeHeuristic(vector<Node *> nodes, float alpha)
@@ -89,31 +123,35 @@ bool isSolutionComplete(vector<Node *> nodes)
     return true;
 }
 
-vector<Node *> fetchAllNodes(Graph *graph)
+void updateProbabilityList(vector<float> *probabilities, vector<float> averages, vector<Node *> sol)
 {
-    // iterar sobre os nós do grafo
-    vector<Node *> possibleNodes;
-    Node *node = graph->getFirstNode();
-    Node *newNode;
-    do
+    vector<float> qualities;
+    float quality, totalQuality = 0;
+
+    for (int i = 0; i < sol.size(); i++)
     {
-        newNode = node;
-        possibleNodes.push_back(newNode);
-        node = node->getNextNode();
-    } while (node != nullptr);
-    return possibleNodes;
+        
+        totalQuality += quality;
+    }
+
+    for (int i = 0; i < sol.size(); i++)
+    {
+        (*probabilities)[i] = (qualities[i] / (float)totalQuality);
+    }
+
 }
 
-void clearVisitedAndRatio(Graph *graph)
+float selectAlpha(vector<float> probabilities, vector<float> alphas)
 {
-    Node *node = graph->getFirstNode();
-    while (node != nullptr)
-    {
-        node->setVisited(false);
-        node->setRatio(0);
-        node = node->getNextNode();
-    }
+    float alpha;
+
+    return alpha;
 }
+
+void updateAverageList(vector<float> averageList, vector<Node *> solutionAux, float alpha)
+{
+}
+
 
 vector<Node *> beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
 {
@@ -122,17 +160,24 @@ vector<Node *> beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
     vector<Node *> solution;
     // DONE?: preenche o vector de possíveis nós com todos os nós do grafo
     vector<Node *> possibleNodes = fetchAllNodes(graph);
-    // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
+
+    // DONE: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
     clearVisitedAndRatio(graph);
 
     do
     {
         Node *node = heuristic(possibleNodes);
+
         auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
+
         solution.push_back(node);
-        possibleNodes.erase(nodePosition);
+
         markNeighborsAsVisited(graph, node);
+
+        possibleNodes.erase(nodePosition);
+
         solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
+
     } while (solutionComplete == false); // definir condicao de parada para solução completa
 
     clearVisitedAndRatio(graph);
@@ -170,56 +215,77 @@ vector<Node *> beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
         possibleNodes.erase(nodePosition);
         markNeighborsAsVisited(graph, node);
         solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
-    } while (solutionComplete == false); // definir condicao de parada para solução completa
+    } while (solutionComplete == false);
 
     clearVisitedAndRatio(graph);
-
-    // DONE: imprimir a solução
-    // cout << "Solucao:" << endl;
-    // for (int i = 0; i < solution.size(); i++)
-    // {
-    //     cout << solution[i]->getId() << " ";
-    // }
-    // cout << endl;
 
     return solution;
 }
 
-void beginRandomReactiveAlgorithm(Graph *graph)
+vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph)
 {
-    vector<Node *> solution, solutionAux;
-    vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
-    vector<float> solutionbest;
-    int blockSize = 250;
-    bool solutionComplete = false;
+    vector<Node *> bestSolution, solutionAux;
 
-    vector<Node *> possibleNodes = fetchAllNodes(graph);
-    // TODO: inclui todos os nós que não podem ser "evitados" na solution e remove do possibleNodes
-    clearVisitedAndRatio(graph);
-    for (size_t i = 0; i < alphas.size(); i++)
+    vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
+    vector<float> alphaProbability{0, 0, 0, 0, 0};
+    vector<float> averageSolutionQualityPerAlpha{0, 0, 0, 0, 0};
+
+    int blockSize = 250;
+    int iterationCount = 2500;
+    int bestSolutionWeight = 0;
+    bool solutionComplete = false;
+    float alpha = 0;
+
+    vector<Node *> possibleNodes;
+
+    // TODO: loop de testes deve ser colocado aqui?
+
+    for (size_t i = 0; i < iterationCount; i++)
     {
+
+        possibleNodes.clear();
+        solutionAux.clear();
+        possibleNodes = fetchAllNodes(graph);
+
+        if (i % blockSize == 0)
+        {
+            updateProbabilityList(&alphaProbability, averageSolutionQualityPerAlpha, bestSolution);
+        }
+
+        alpha = selectAlpha(alphaProbability, alphas);
+
         do
         {
             Node *node = randomizedAdaptativeHeuristic(possibleNodes, alphas[i]);
+
             auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
-            solution.push_back(node);
-            possibleNodes.erase(nodePosition);
+
+            solutionAux.push_back(node);
+
             markNeighborsAsVisited(graph, node);
+
+            possibleNodes.erase(nodePosition);
+
             solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
+
         } while (solutionComplete == false); // definir condicao de parada para solução completa
+
+        updateAverageList(averageSolutionQualityPerAlpha, solutionAux, alpha);
+
         if (i == 0)
-            solutionAux = solution;
-        if (solution.size() < solutionAux.size())
-            solutionAux = solution;
+        {
+            bestSolution = solutionAux;
+            bestSolutionWeight = findTotalWeight(bestSolution);
+        }
+
+        if (bestSolutionWeight < findTotalWeight(solutionAux))
+        {
+            bestSolution = solutionAux;
+            bestSolutionWeight = findTotalWeight(bestSolution);
+        }
+
+        clearVisitedAndRatio(graph);
     }
 
-    clearVisitedAndRatio(graph);
-
-    // DONE: imprimir a solução
-    // cout << "Solucao:" << endl;
-    // for (int i = 0; i < solution.size(); i++)
-    // {
-    //     cout << solution[i]->getId() << " ";
-    // }
-    // cout << endl;
+    return bestSolution;
 }
