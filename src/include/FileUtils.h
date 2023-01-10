@@ -11,16 +11,6 @@
 
 using namespace std;
 
-int findTotalWeight(vector<Node *> nodes)
-{
-     int total = 0;
-     for (int i = 0; i < nodes.size(); i++)
-     {
-          total = total + nodes[i]->getNodeWeight();
-     }
-     return total;
-}
-
 string getFileName(string txt)
 {
      size_t pos = txt.find_last_of("/");
@@ -459,6 +449,49 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           cout << endl;
           break;
      }
+     case 'G':
+     {
+          cout << "(G) - Algoritmo construtivo guloso randomizado reativo" << endl;
+          Metrics p;
+          Setup_metrics(&p);
+          int iterNumber = 250;
+          int blockSize = 25;
+          int bestSolutionSize, bestSolutionWeight;
+          std::chrono::duration<double> bestSolutionTime;
+          vector<Node *> vectorNode;
+
+          output_file << "\n-----\nAlgoritmo construtivo guloso randomizado reativo.\n---";
+          output_file << "\nArquivo: " << input_file_name;
+
+          vectorNode = beginRandomizedReactiveAlgorithm(graphG1, blockSize, iterNumber, bestSolutionWeight, bestSolutionTime);
+          bestSolutionSize = vectorNode.size();
+          output_file << "\nSolucao: ";
+          cout << "\nSolucao: " << endl;
+          for (size_t i = 0; i < vectorNode.size(); i++)
+          {
+               if (i % 20 == 0 && i >= 20)
+                    output_file << endl;
+               output_file << vectorNode[i]->getId() << " ";
+               cout << vectorNode[i]->getId() << " ";
+          }
+
+          Set_CPUtime(&p, bestSolutionTime.count());
+
+          output_file << "\nA solução tem " << bestSolutionSize << " vertices";
+          cout << "\nA solução tem " << bestSolutionSize << " vertices";
+
+          output_file << "\nPeso total da solução: " << bestSolutionWeight;
+          cout << "\nPeso total da solução: " << bestSolutionWeight;
+
+          output_file << "\nPerformace: " << p.time << "s";
+          cout << "\nPerformace: " << p.time << "s";
+
+          output_file << "\nNumero de iteraçoes: " << iterNumber << endl;
+          cout << "\nNumero de iteracoes: " << iterNumber << endl;
+
+          cout << endl;
+          break;
+     }
      case 'P': // Imprimir o Grafo
      {
           cout << "(P) - Imprimir a Lista" << endl;
@@ -491,7 +524,7 @@ int mainMenu(ofstream &output_file, Graph *graph, string input_file_name, int se
 {
      // Verifica se as a pessoa digitou uma opção valida
      char selection = '1';
-     vector<char> selectionCheck = {'A', 'B', 'C', 'D', 'E', 'F', 'P', 'X'};
+     vector<char> selectionCheck = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'P', 'X'};
      auto it = find(selectionCheck.begin(), selectionCheck.end(), selection);
      do
      {
