@@ -371,8 +371,9 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
      case 'F':
      {
           cout << "(F) - Algoritmo construtivo guloso randomizado e adaptativo" << endl;
-          Metrics p;
+          Metrics p, p_global;
           Setup_metrics(&p);
+          Setup_metrics(&p_global);
 
           float alpha;
           int iterNumber, bestSolutionSize, bestSolutionWeight;
@@ -397,6 +398,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           output_file << "\nAlfa: " << alpha;
 
           iterNumber = 500;
+          auto t0_global = std::chrono::high_resolution_clock::now();
           for (int i = 0; i < iterNumber; i++)
           {
                auto t0 = std::chrono::high_resolution_clock::now();
@@ -419,6 +421,8 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
                     bestSolutionTime = delta;
                }
           }
+          auto t1_global = std::chrono::high_resolution_clock::now();
+          std::chrono::duration<double> delta_global = t1_global - t0_global;
 
           output_file << "\nSolucao: ";
           cout << "\nSolucao: " << endl;
@@ -431,12 +435,16 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           Set_CPUtime(&p, bestSolutionTime.count());
+          Set_CPUtime(&p_global, delta_global.count());
 
           output_file << "\nA solução tem " << bestSolutionSize << " vertices";
           cout << "\nA solução tem " << bestSolutionSize << " vertices";
 
           output_file << "\nPeso total da solução: " << bestSolutionWeight;
           cout << "\nPeso total da solução: " << bestSolutionWeight;
+
+          output_file << "\nPerformace total: " << p_global.time << "s";
+          cout << "\nPerformace total: " << p_global.time << "s";
 
           output_file << "\nPerformace: " << p.time << "s";
           cout << "\nPerformace: " << p.time << "s";
@@ -454,8 +462,8 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           cout << "(G) - Algoritmo construtivo guloso randomizado reativo" << endl;
           Metrics p;
           Setup_metrics(&p);
-          int iterNumber = 250;
-          int blockSize = 25;
+          int iterNumber = 2500;
+          int blockSize = 250;
           int bestSolutionSize, bestSolutionWeight;
           std::chrono::duration<double> bestSolutionTime;
           vector<Node *> vectorNode;

@@ -1,12 +1,25 @@
 #include <iostream>
 #include <vector>
+#include <math.h>
+#include <limits.h>
 #include <cstdlib>
 #include <climits>
+
 #include "Graph.h"
 #include "SortingMethods.h"
-#include <limits.h>
 
 using namespace std;
+
+float ALPHAS[] = {0.05, 0.10, 0.15, 0.30, 0.50};
+
+typedef struct
+{
+    float alpha;
+    float probability;
+    int averageSolution;
+    int totalWeight;
+    int iterationsNumber;
+} reactiveAlpha;
 
 void calculateRatio(vector<Node *> nodes)
 {
@@ -54,29 +67,31 @@ void clearVisitedAndRatio(Graph *graph)
     }
 }
 
+int random(int max)
+{
+    return (rand() % max);
+}
+
 // Gera um número aleatório de 0 ate a 'porcentagem' de alpha em node
 int RandomNumberGeneration(float alpha, int sizeNode)
 {
     int maxRange = ((float)alpha * sizeNode);
-    int generatedNumber = rand() % maxRange;
-
-    cout << "Max range: " << maxRange << endl;
-    cout << "Generated number: " << generatedNumber << endl;
+    int generatedNumber = random(maxRange);
 
     return generatedNumber;
 }
 
-// int findTotalWeight(vector<Node *> nodes)
-// {
-//     int total = 0;
-//     for (int i = 0; i < nodes.size(); i++)
-//     {
-//         total = total + nodes[i]->getNodeWeight();
-//     }
-//     return total;
-// }
+int findTotalWeight(vector<Node *> nodes)
+{
+    int total = 0;
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        total = total + nodes[i]->getNodeWeight();
+    }
+    return total;
+}
 
-// WIP: implementar o algoritmo guloso randomizado
+// DONE: implementar o algoritmo guloso randomizado
 Node *randomizedAdaptativeHeuristic(vector<Node *> nodes, float alpha)
 {
     calculateRatio(nodes);
@@ -123,43 +138,50 @@ bool isSolutionComplete(vector<Node *> nodes)
     return true;
 }
 
-void updateProbabilityList(vector<float> *probabilities, vector<float> averages, vector<Node *> sol)
+float updateProbabilityList(vector<reactiveAlpha> *alphaList, float bestQuality)
 {
-    vector<float> qualities;
+    // qualidade = peso
+    // valor das i qualidades = ((melhor qualidade) / media das qualidades do alfai) elevado a 10
     float totalQuality = 0;
+    vector<float> qualities = {0, 0, 0, 0, 0};
 
-    for (int i = 0; i < qualities.size(); i++)
+    for (int i = 0; i < (*alphaList).size(); i++)
     {
-        totalQuality += averages[i];
-    }
-
-    for (int i = 0; i < qualities.size(); i++)
-    {
-        (*probabilities)[i] = (qualities[i] / (float)totalQuality);
-    }
-}
-
-float selectAlpha(vector<float> probabilities, vector<float> alphas)
-{
-    int rand = xrandomRange(0, (short)INT_MAX);
-    int randomProbability = (rand % 101);
-    float sum = 0;
-
-    for (int i = 0; i < probabilities.size(); i++)
-    {
-        sum += probabilities[i] * 100;
-        if (sum >= randomProbability)
+        qualities[i] = pow(((bestQuality) / ((float)(*alphaList)[i].averageSolution)), 10);
+        totalQuality += qualities[i];
+        if (qualities[i] < bestQuality)
         {
-            return alphas[i];
+            bestQuality = qualities[i];
         }
     }
 
-    return alphas[alphas.size() - 1];
+    for (int i = 0; i < (*alphaList).size(); i++)
+    {
+        (*alphaList)[i].probability = (qualities[i] / (float)totalQuality);
+    }
+
+    return bestQuality;
 }
 
-void updateAverageList(vector<float> averageList, vector<Node *> solutionAux, float alpha)
+float selectAlpha(vector<reactiveAlpha> alphaList)
 {
-    // TODO: Att a lista
+    int generatedNumber = random(alphaList.size());
+    return alphaList[generatedNumber].alpha;
+}
+
+void updateAverageList(vector<reactiveAlpha> *alphas, int weight, float alpha)
+{
+    // DOING: Att a lista
+
+    for (int i = 0; i < alphas->size(); i++)
+    {
+        if ((*alphas)[i].alpha == alpha)
+        {
+            (*alphas)[i].iterationsNumber++;
+            (*alphas)[i].totalWeight += weight;
+            (*alphas)[i].averageSolution = (((float)(*alphas)[i].totalWeight) / ((*alphas)[i].iterationsNumber));
+        }
+    }
 }
 
 vector<Node *> beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
@@ -233,18 +255,26 @@ vector<Node *> beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
 
 vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph, int blockSize, int iterationCount, int &bestSolutionWeight, std::chrono::duration<double> &bestSolutionTime)
 {
-    vector<Node *> bestSolution, solutionAux;
-    vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
-    vector<float> alphaProbability{0, 0, 0, 0, 0};
-    vector<float> averageSolutionQualityPerAlpha{0, 0, 0, 0, 0};
-
-    // int blockSize = 250;
-    // int iterationCount = 2500;
 
     bool solutionComplete = false;
-    float alpha = 0;
+    float alpha = 0, bestQuality = (float)INT_MAX;
+    int bestWeightSolution = INT_MAX, weight = 0;
 
-    //     vector<Node *> possibleNodes;
+    vector<Node *> solutionAux, bestSolution;
+    vector<Node *> possibleNodes;
+
+    vector<reactiveAlpha> alphaList;
+
+    for (int i = 0; i < 5; i++)
+    {
+        reactiveAlpha a;
+        a.alpha = ALPHAS[i];
+        a.averageSolution = INT_MAX;
+        a.probability = 0;
+        a.iterationsNumber = 0;
+        a.totalWeight = 0;
+        alphaList.push_back(a);
+    }
 
     Metrics p;
     Setup_metrics(&p);
@@ -254,54 +284,53 @@ vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph, int blockSize, int
     {
         auto t0 = std::chrono::high_resolution_clock::now();
 
-        //         possibleNodes.clear();
-        //         solutionAux.clear();
-        //         possibleNodes = fetchAllNodes(graph);
+        possibleNodes.clear();
+        solutionAux.clear();
+        possibleNodes = fetchAllNodes(graph);
 
         if (i % blockSize == 0)
         {
-            updateProbabilityList(&alphaProbability, averageSolutionQualityPerAlpha, bestSolution);
+            bestQuality = updateProbabilityList(&alphaList, bestQuality);
         }
-        alpha = selectAlpha(alphaProbability, alphas);
+        alpha = selectAlpha(alphaList);
 
         do
         {
-            // Node *node = randomizedAdaptativeHeuristic(possibleNodes, alphas[i]);
             Node *node = randomizedAdaptativeHeuristic(possibleNodes, alpha);
 
-            //             auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
+            auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
 
-            //             solutionAux.push_back(node);
+            solutionAux.push_back(node);
+            markNeighborsAsVisited(graph, node);
+            possibleNodes.erase(nodePosition);
 
-            //             markNeighborsAsVisited(graph, node);
+            solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
 
-            //             possibleNodes.erase(nodePosition);
+        } while (solutionComplete == false); // definir condicao de parada para solução completa
 
-            //             solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
+        weight = findTotalWeight(solutionAux);
 
-            //         } while (solutionComplete == false); // definir condicao de parada para solução completa
+        updateAverageList(&alphaList, weight, alpha);
 
-            //         updateAverageList(averageSolutionQualityPerAlpha, solutionAux, alpha);
+        auto t1 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> delta = t1 - t0;
 
-            auto t1 = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> delta = t1 - t0;
+        if (i == 0)
+        {
+            bestSolution = solutionAux;
+            bestSolutionWeight = weight;
+            bestSolutionTime = delta;
+        }
 
-            if (i == 0)
-            {
-                bestSolution = solutionAux;
-                bestSolutionWeight = findTotalWeight(bestSolution);
-                bestSolutionTime = delta;
-            }
+        if (weight < bestSolutionWeight)
+        {
+            bestSolution = solutionAux;
+            bestSolutionWeight = weight;
+            bestSolutionTime = delta;
+        }
 
-            if (bestSolutionWeight < findTotalWeight(solutionAux))
-            {
-                bestSolution = solutionAux;
-                bestSolutionWeight = findTotalWeight(bestSolution);
-                bestSolutionTime = delta;
-            }
+        clearVisitedAndRatio(graph);
+    }
 
-    //         clearVisitedAndRatio(graph);
-    //     }
-
-    //     return bestSolution;
-    // }
+    return bestSolution;
+}
