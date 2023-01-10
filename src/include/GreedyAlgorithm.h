@@ -126,32 +126,41 @@ bool isSolutionComplete(vector<Node *> nodes)
 void updateProbabilityList(vector<float> *probabilities, vector<float> averages, vector<Node *> sol)
 {
     vector<float> qualities;
-    float quality, totalQuality = 0;
+    float totalQuality = 0;
 
-    for (int i = 0; i < sol.size(); i++)
+    for (int i = 0; i < qualities.size(); i++)
     {
-        
-        totalQuality += quality;
+        totalQuality += averages[i];
     }
 
-    for (int i = 0; i < sol.size(); i++)
+    for (int i = 0; i < qualities.size(); i++)
     {
         (*probabilities)[i] = (qualities[i] / (float)totalQuality);
     }
-
 }
 
 float selectAlpha(vector<float> probabilities, vector<float> alphas)
 {
-    float alpha;
+    int rand = xrandomRange(0, (short)INT_MAX);
+    int randomProbability = (rand % 101);
+    float sum = 0;
 
-    return alpha;
+    for (int i = 0; i < probabilities.size(); i++)
+    {
+        sum += probabilities[i] * 100;
+        if (sum >= randomProbability)
+        {
+            return alphas[i];
+        }
+    }
+
+    return alphas[alphas.size() - 1];
 }
 
 void updateAverageList(vector<float> averageList, vector<Node *> solutionAux, float alpha)
 {
+    // TODO: Att a lista
 }
-
 
 vector<Node *> beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
 {
@@ -222,26 +231,28 @@ vector<Node *> beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
     return solution;
 }
 
-vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph)
+vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph, int blockSize, int iterationCount, int &bestSolutionWeight, std::chrono::duration<double> &bestSolutionTime)
 {
     vector<Node *> bestSolution, solutionAux;
-
     vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
     vector<float> alphaProbability{0, 0, 0, 0, 0};
     vector<float> averageSolutionQualityPerAlpha{0, 0, 0, 0, 0};
 
-    int blockSize = 250;
-    int iterationCount = 2500;
-    int bestSolutionWeight = 0;
+    // int blockSize = 250;
+    // int iterationCount = 2500;
+
     bool solutionComplete = false;
     float alpha = 0;
 
     vector<Node *> possibleNodes;
 
+    Metrics p;
+    Setup_metrics(&p);
     // TODO: loop de testes deve ser colocado aqui?
 
     for (size_t i = 0; i < iterationCount; i++)
     {
+        auto t0 = std::chrono::high_resolution_clock::now();
 
         possibleNodes.clear();
         solutionAux.clear();
@@ -251,12 +262,12 @@ vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph)
         {
             updateProbabilityList(&alphaProbability, averageSolutionQualityPerAlpha, bestSolution);
         }
-
         alpha = selectAlpha(alphaProbability, alphas);
 
         do
         {
-            Node *node = randomizedAdaptativeHeuristic(possibleNodes, alphas[i]);
+            // Node *node = randomizedAdaptativeHeuristic(possibleNodes, alphas[i]);
+            Node *node = randomizedAdaptativeHeuristic(possibleNodes, alpha);
 
             auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
 
@@ -272,16 +283,21 @@ vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph)
 
         updateAverageList(averageSolutionQualityPerAlpha, solutionAux, alpha);
 
+        auto t1 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> delta = t1 - t0;
+
         if (i == 0)
         {
             bestSolution = solutionAux;
             bestSolutionWeight = findTotalWeight(bestSolution);
+            bestSolutionTime = delta;
         }
 
         if (bestSolutionWeight < findTotalWeight(solutionAux))
         {
             bestSolution = solutionAux;
             bestSolutionWeight = findTotalWeight(bestSolution);
+            bestSolutionTime = delta;
         }
 
         clearVisitedAndRatio(graph);
