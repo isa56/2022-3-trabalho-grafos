@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <climits>
 #include "Graph.h"
-#include "random.h"
 #include "SortingMethods.h"
 #include <limits.h>
 
@@ -58,23 +57,24 @@ void clearVisitedAndRatio(Graph *graph)
 // Gera um número aleatório de 0 ate a 'porcentagem' de alpha em node
 int RandomNumberGeneration(float alpha, int sizeNode)
 {
-    int range = ((float)alpha * sizeNode);
-    if (range < 1) // Para nunca tentar dividir por 0
-        range = 1;
-    int rand = xrandomRange(0, (short)INT_MAX);
-    int random = (rand % range);
-    return random;
+    int maxRange = ((float)alpha * sizeNode);
+    int generatedNumber = rand() % maxRange;
+
+    cout << "Max range: " << maxRange << endl;
+    cout << "Generated number: " << generatedNumber << endl;
+
+    return generatedNumber;
 }
 
-int findTotalWeight(vector<Node *> nodes)
-{
-    int total = 0;
-    for (int i = 0; i < nodes.size(); i++)
-    {
-        total = total + nodes[i]->getNodeWeight();
-    }
-    return total;
-}
+// int findTotalWeight(vector<Node *> nodes)
+// {
+//     int total = 0;
+//     for (int i = 0; i < nodes.size(); i++)
+//     {
+//         total = total + nodes[i]->getNodeWeight();
+//     }
+//     return total;
+// }
 
 // WIP: implementar o algoritmo guloso randomizado
 Node *randomizedAdaptativeHeuristic(vector<Node *> nodes, float alpha)
@@ -130,7 +130,7 @@ void updateProbabilityList(vector<float> *probabilities, vector<float> averages,
 
     for (int i = 0; i < sol.size(); i++)
     {
-        
+
         totalQuality += quality;
     }
 
@@ -138,7 +138,6 @@ void updateProbabilityList(vector<float> *probabilities, vector<float> averages,
     {
         (*probabilities)[i] = (qualities[i] / (float)totalQuality);
     }
-
 }
 
 float selectAlpha(vector<float> probabilities, vector<float> alphas)
@@ -151,7 +150,6 @@ float selectAlpha(vector<float> probabilities, vector<float> alphas)
 void updateAverageList(vector<float> averageList, vector<Node *> solutionAux, float alpha)
 {
 }
-
 
 vector<Node *> beginGreedyAlgorithm(Graph *graph, ofstream &output_file)
 {
@@ -222,70 +220,70 @@ vector<Node *> beginRandomizedAdaptativeAlgorithm(Graph *graph, float alpha)
     return solution;
 }
 
-vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph)
-{
-    vector<Node *> bestSolution, solutionAux;
+// vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph)
+// {
+//     vector<Node *> bestSolution, solutionAux;
 
-    vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
-    vector<float> alphaProbability{0, 0, 0, 0, 0};
-    vector<float> averageSolutionQualityPerAlpha{0, 0, 0, 0, 0};
+//     vector<float> alphas{0.05, 0.10, 0.15, 0.30, 0.50};
+//     vector<float> alphaProbability{0, 0, 0, 0, 0};
+//     vector<float> averageSolutionQualityPerAlpha{0, 0, 0, 0, 0};
 
-    int blockSize = 250;
-    int iterationCount = 2500;
-    int bestSolutionWeight = 0;
-    bool solutionComplete = false;
-    float alpha = 0;
+//     int blockSize = 250;
+//     int iterationCount = 2500;
+//     int bestSolutionWeight = 0;
+//     bool solutionComplete = false;
+//     float alpha = 0;
 
-    vector<Node *> possibleNodes;
+//     vector<Node *> possibleNodes;
 
-    // TODO: loop de testes deve ser colocado aqui?
+//     // TODO: loop de testes deve ser colocado aqui?
 
-    for (size_t i = 0; i < iterationCount; i++)
-    {
+//     for (size_t i = 0; i < iterationCount; i++)
+//     {
 
-        possibleNodes.clear();
-        solutionAux.clear();
-        possibleNodes = fetchAllNodes(graph);
+//         possibleNodes.clear();
+//         solutionAux.clear();
+//         possibleNodes = fetchAllNodes(graph);
 
-        if (i % blockSize == 0)
-        {
-            updateProbabilityList(&alphaProbability, averageSolutionQualityPerAlpha, bestSolution);
-        }
+//         if (i % blockSize == 0)
+//         {
+//             updateProbabilityList(&alphaProbability, averageSolutionQualityPerAlpha, bestSolution);
+//         }
 
-        alpha = selectAlpha(alphaProbability, alphas);
+//         alpha = selectAlpha(alphaProbability, alphas);
 
-        do
-        {
-            Node *node = randomizedAdaptativeHeuristic(possibleNodes, alphas[i]);
+//         do
+//         {
+//             Node *node = randomizedAdaptativeHeuristic(possibleNodes, alphas[i]);
 
-            auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
+//             auto nodePosition = (find(possibleNodes.begin(), possibleNodes.end(), node));
 
-            solutionAux.push_back(node);
+//             solutionAux.push_back(node);
 
-            markNeighborsAsVisited(graph, node);
+//             markNeighborsAsVisited(graph, node);
 
-            possibleNodes.erase(nodePosition);
+//             possibleNodes.erase(nodePosition);
 
-            solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
+//             solutionComplete = (isSolutionComplete(possibleNodes)) || (possibleNodes.empty());
 
-        } while (solutionComplete == false); // definir condicao de parada para solução completa
+//         } while (solutionComplete == false); // definir condicao de parada para solução completa
 
-        updateAverageList(averageSolutionQualityPerAlpha, solutionAux, alpha);
+//         updateAverageList(averageSolutionQualityPerAlpha, solutionAux, alpha);
 
-        if (i == 0)
-        {
-            bestSolution = solutionAux;
-            bestSolutionWeight = findTotalWeight(bestSolution);
-        }
+//         if (i == 0)
+//         {
+//             bestSolution = solutionAux;
+//             bestSolutionWeight = findTotalWeight(bestSolution);
+//         }
 
-        if (bestSolutionWeight < findTotalWeight(solutionAux))
-        {
-            bestSolution = solutionAux;
-            bestSolutionWeight = findTotalWeight(bestSolution);
-        }
+//         if (bestSolutionWeight < findTotalWeight(solutionAux))
+//         {
+//             bestSolution = solutionAux;
+//             bestSolutionWeight = findTotalWeight(bestSolution);
+//         }
 
-        clearVisitedAndRatio(graph);
-    }
+//         clearVisitedAndRatio(graph);
+//     }
 
-    return bestSolution;
-}
+//     return bestSolution;
+// }

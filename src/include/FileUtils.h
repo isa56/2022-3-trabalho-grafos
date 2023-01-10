@@ -196,7 +196,7 @@ char menu()
      return toupper(selection);
 }
 
-void selecionar(char selection, Graph *graphG1, ofstream &output_file, string input_file_name)
+void selecionar(char selection, Graph *graphG1, ofstream &output_file, string input_file_name, int seed)
 {
      system("clear");
      int order = graphG1->getOrder();
@@ -451,9 +451,11 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           output_file << "\nPerformace: " << p.time << "s";
           cout << "\nPerformace: " << p.time << "s";
 
-          output_file << "\nNumero de iteraçoes: " << iterNumber << endl;
-          cout << "\nNumero de iteracoes: " << iterNumber << endl;
+          output_file << "\nNumero de iteraçoes: " << iterNumber;
+          cout << "\nNumero de iteracoes: " << iterNumber;
 
+          output_file << "\nSemente de randomização: " << seed << endl;
+          cout << "\nSemente de randomização: " << seed << endl;
           cout << endl;
           break;
      }
@@ -485,7 +487,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
      }
 }
 
-int mainMenu(ofstream &output_file, Graph *graph, string input_file_name)
+int mainMenu(ofstream &output_file, Graph *graph, string input_file_name, int seed)
 {
      // Verifica se as a pessoa digitou uma opção valida
      char selection = '1';
@@ -497,7 +499,7 @@ int mainMenu(ofstream &output_file, Graph *graph, string input_file_name)
           selection = menu();
           it = find(selectionCheck.begin(), selectionCheck.end(), selection);
           if (output_file.is_open())
-               selecionar(selection, graph, output_file, input_file_name);
+               selecionar(selection, graph, output_file, input_file_name, seed);
           else
                cout << "Erro no arquivo de salvamento!" << endl;
           output_file << endl;
