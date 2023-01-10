@@ -259,6 +259,7 @@ vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph, int blockSize, int
     bool solutionComplete = false;
     float alpha = 0, bestQuality = (float)INT_MAX;
     int bestWeightSolution = INT_MAX, weight = 0;
+    float bestAlpha = 0.05;
 
     vector<Node *> solutionAux, bestSolution;
     vector<Node *> possibleNodes;
@@ -327,10 +328,11 @@ vector<Node *> beginRandomizedReactiveAlgorithm(Graph *graph, int blockSize, int
             bestSolution = solutionAux;
             bestSolutionWeight = weight;
             bestSolutionTime = delta;
+            bestAlpha = alpha;
         }
 
         clearVisitedAndRatio(graph);
     }
-
+    cout << "Melhor Alfa" << bestAlpha << endl;
     return bestSolution;
 }
