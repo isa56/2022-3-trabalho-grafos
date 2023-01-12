@@ -1,24 +1,22 @@
-#include "include/Graph.h"
-#include "include/Metrics.h"
 #include <cctype>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
-#include <queue>
+#include "include/Graph.h"
+#include "include/Metrics.h"
 
-using namespace std;
 int INF_P = 9999;
 int INF_N = -9999;
+
 // Construtor
 Graph::Graph(int _order, bool _directed, bool _weightedEdge, bool _weightedNode)
 {
      this->order = _order;
-     this->directed = _directed;
      this->edgeHasWeight = _weightedEdge;
      this->nodeHasWeight = _weightedNode;
-
+     this->directed = _directed;
      this->firstNode = nullptr;
      this->lastNode = nullptr;
      this->edgesNumber = 0;
@@ -79,12 +77,13 @@ void Graph::insertNode(int _id)
           this->lastNode = newNode;
      }
 }
-void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
+
+void Graph::insertEdge(int _originId, int _targetId, float _weightEdge)
 {
      // Se o Nó existe eu so adiciono a aresta
-     if (!this->searchNode(_id))
+     if (!this->searchNode(_originId))
      {
-          this->insertNode(_id);
+          this->insertNode(_originId);
      }
      if (!this->searchNode(_targetId))
      {
@@ -93,7 +92,7 @@ void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
 
      // Insiro aresta do nó id-targetId
 
-     Node *node = this->getNode(_id);
+     Node *node = this->getNode(_originId);
      Node *targetNode = this->getNode(_targetId);
      // cout << "Id: " << node->getId() << " e targetId: " << targetNode->getId() << endl;
      if (targetNode != nullptr && node != nullptr)
@@ -108,7 +107,7 @@ void Graph::insertEdge(int _id, int _targetId, float _weightEdge)
           else
           {
                node->addEdge(_targetId, _weightEdge);
-               targetNode->addEdge(_id, _weightEdge);
+               targetNode->addEdge(_originId, _weightEdge);
                node->incrementDegree();
                targetNode->incrementDegree();
           }
@@ -168,6 +167,10 @@ Node *Graph::getNode(int _id)
                return node;
           node = node->getNextNode();
      }
+     return nullptr;
+}
+Node *Graph::getNodeByPosition(int position)
+{
      return nullptr;
 }
 void Graph::printList()
@@ -509,48 +512,17 @@ void Graph::graphDifference(Graph *G1, Graph *G2)
           x++;
      }
 }
+
 void Graph::PERT()
 {
-     // TODO: implementar a Rede PERT
-     cout << "Rede PERT" << endl;
-     // [x] Verificar se é aciclico (Com busca em profundidade)
-     // [] Ordenação topológica
-     // Caminho minimo
+     cout << endl;
 
-     Node *start = this->getFirstNode();
-     Node *end = this->getFirstNode();
+     int id_start, id_end = 0;
 
      int largerNumber = 0;
-     Node *node = this->getFirstNode();
-
      Edge *edge;
      int i = 0;
-     // Ja sabemos quais os vertice para começar na rede PERT
 
-     while (node != nullptr)
-     {
-          if (node->getInDegree() == 0)
-          {
-               start = node;
-          }
-          else if (node->getOutDegree() == 0)
-          {
-               end = node;
-          }
-          if (start->getId() != end->getId())
-          {
-               if ((start->getOutDegree() < node->getOutDegree()) && (node->getInDegree() == 0 && node->getOutDegree() > 0))
-               {
-                    start = node;
-               }
-               if ((start->getInDegree() < node->getInDegree()) && (node->getOutDegree() == 0 && node->getInDegree() > 0))
-               {
-                    end = node;
-               }
-          }
-
-          node = node->getNextNode();
-     }
      vector<bool> visited;
      visited.assign(largerNumber, false); // Todos os valores do vetor como falso
 
@@ -563,20 +535,30 @@ void Graph::PERT()
           visited.assign(largerNumber, false); // Todos os valores do vetor como falso
           firstNode = firstNode->getNextNode();
      }
-
-     if (hasCycle || !this->isDirected())
+     if (!this->isDirected())
+     {
+          cout << this->isDirected() << endl;
+     }
+     if (hasCycle || !this->isDirected() || !this->isEdgeWeighted())
      {
           cout << "Para a rede PERT é preciso que o grafo seja acíclico e direcionado"
                << endl;
           return;
      }
-     // Organização topologica
-     this->TopologicalSorting();
 
-     // caminho usando dijkstra
-     this->MaximumPath(start->getId(), end->getId());
-     // cout << "Tempo de projeto: " << this->Dijkstra(start->getId(), end->getId()) << endl;
+     // Organização topologica
+     cout << "A ordem das Tarefas a serem realizada eh: ";
+     this->TopologicalSorting(id_start, id_end);
+
+     cout << "O Vertice START eh '" << id_start
+          << "' e o Vertice END eh '" << id_end << "'" << endl;
+
+     if (this->order < 50 && this->getEdgesNumber() < 100)
+          this->MaximumPath(id_start, id_end);
+     else // caminho usando dijkstra
+          cout << "Tempo de projeto por Dijkstra: " << this->Dijkstra(id_start, id_end) << endl;
 }
+
 void Graph::FileDot(ofstream &output_file, GraphDOT GDot)
 {
      Node *node = this->getFirstNode();
@@ -591,7 +573,7 @@ void Graph::FileDot(ofstream &output_file, GraphDOT GDot)
 
      string label = '"' + GDot.description + '"';
      // Descrição comentada no arquivo .dot
-     output_file << "/*\nGrupo 21 (Eduardo Araujo, Isadora Ferreira e Miguel Sales)\nDisciplina Teoria dos Grafos - UFJF - Prof. Stênio Sã\n*/ " << endl;
+     output_file << "/*\nGrupo 21 (Eduardo Nascimento, Isadora Ferreira e Miguel Sales)\nDisciplina Teoria dos Grafos - UFJF - Prof. Stênio Sã\n*/ " << endl;
      // Mostra os aquivo(s) que gerou o grafo
      output_file << "/*\n"
                  << "G1 é o arquivo: " << GDot.G1;
@@ -730,7 +712,7 @@ void Graph::TopologicalSortUtil(int v, bool visited[], queue<int> &Stack)
      Stack.push(v);
 }
 
-void Graph::TopologicalSorting()
+void Graph::TopologicalSorting(int &id_start, int &id_end)
 {
      queue<int> Stack;
 
@@ -747,13 +729,15 @@ void Graph::TopologicalSorting()
                TopologicalSortUtil(i, visited, Stack);
           }
      }
-
+     id_start = Stack.front();
+     id_end = Stack.back();
      while (Stack.empty() == false)
      {
           cout << Stack.front() << " ";
           Stack.pop();
      }
      cout << endl;
+     delete[] visited;
 }
 
 void Graph::MaximumPath(int id_start, int id_end)
@@ -768,38 +752,38 @@ void Graph::MaximumPath(int id_start, int id_end)
      for (int i = 0; i < length; i++)
           visited[i] = false;
 
-     MaximumPathUtil(id_start, id_end, visited, path, path_i);
+     MaximumPathUtil(id_start, id_end, visited, path, path_i, maxPath);
 
-     // cout << "Tempo de produção: " << maxPath << endl;
+     cout << "O tempo total de execução do projeto: " << maxPath << endl;
+     delete[] visited;
+     delete[] path;
 }
 
-void Graph::MaximumPathUtil(int id_start, int id_end, bool visited[], int path[], int &path_i)
+void Graph::MaximumPathUtil(int id_start, int id_end, bool visited[], int path[], int &path_i, float &maxPath)
 {
      visited[id_start] = true;
      path[path_i] = id_start;
      path_i++;
+     float max_aux;
      if (id_start == id_end)
      {
-          float max_aux = 0;
+          max_aux = 0;
           // Usado para verificar os Vertices que está no path
           for (int i = 0; i < path_i - 1; i++)
           {
-               cout << path[i] << " ";
                max_aux += this->getNode(path[i])->searchEdge(path[i + 1])->getEdgeWeight();
           }
-
-          cout << "  -> E o tempo eh ->" << max_aux << endl;
+          if (max_aux > maxPath)
+               maxPath = max_aux;
      }
      else
      {
           // Percorro todas as arrestas
-          int i;
           Edge *edgeaux = this->getNode(id_start)->getFirstEdge();
           while (edgeaux != nullptr)
           {
-               if (!visited[i]) // Verifico se ja foi visitada
-                    MaximumPathUtil(edgeaux->getId(), id_end, visited, path, path_i);
-               i++;
+               if (visited[edgeaux->getId()] == false) // Verifico se ja foi visitada
+                    MaximumPathUtil(edgeaux->getId(), id_end, visited, path, path_i, maxPath);
                edgeaux = edgeaux->getNextEdge();
           }
      }
@@ -820,16 +804,17 @@ int Graph::Dijkstra(int origin, int destiny)
      int value;
      Node *auxNode = nullptr;
      Edge *auxEdge = nullptr;
-
+     if (nodeDestiny == nullptr)
+          cout << "O no destinho não encontrado" << endl;
+     if (nodeOrigin == nullptr)
+          cout << "O no origem não encontrado" << endl;
+     if (origin == destiny)
+          cout << "O no destinho é o mesmo da origem" << endl;
      if (nodeDestiny == nullptr || nodeOrigin == nullptr || origin == destiny)
      {
           cout << "Vertices não encontrados ou invalidos";
           return 0;
      }
-
-     cout << "\nid start: " << origin << endl;
-     cout << "id end: " << destiny << endl;
-
      for (int i = 0; i < length; i++)
      {
           if (i != origin)

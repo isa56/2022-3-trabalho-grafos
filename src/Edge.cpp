@@ -1,7 +1,6 @@
 #include <iostream>
 #include "include/Edge.h"
 
-
 using namespace std;
 // Construtor
 Edge::Edge(int _id)

@@ -60,3 +60,8 @@
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
+
+output/*.txt
+output/*.dot
+output/*.dot.svg
+input/*

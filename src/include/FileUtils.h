@@ -7,6 +7,7 @@
 #include <string>
 #include "Graph.h"
 #include "Metrics.h"
+#include "GreedyAlgorithm.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ string getFileName(string txt)
      return str2;
 }
 
-Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNodeWeighted)
+Graph *readFilePartOne(ifstream &input_file, int directed, int isEdgeWeighted, int isNodeWeighted, string firstReading)
 {
 
      // Variáveis para auxiliar na criação dos nós no Grafo
@@ -26,7 +27,14 @@ Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNo
      int order;
 
      // Pegando a ordem do grafo
-     input_file >> order;
+     if (firstReading == "")
+     {
+          input_file >> order;
+     }
+     else
+     {
+          order = stoi(firstReading);
+     }
 
      // Criando objeto grafo
      Graph *graph = new Graph(order, directed, isEdgeWeighted, isNodeWeighted);
@@ -76,6 +84,85 @@ Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNo
      return graph;
 }
 
+Graph *readFilePartTwo(ifstream &input_file)
+{
+     // Variáveis para auxiliar na criação dos nós no Grafo
+     string line;
+     int order, hasEdge, nodeWeight;
+     float position;
+
+     // A primeira linha já está limpa pelo readFile
+
+     // Pegando a ordem do grafo:
+     input_file >> order;
+
+     // Cria o grafo:
+     Graph *graph = new Graph(order, false, false, true);
+
+     // Pega a linha de texto com as posições:
+     input_file >> line;
+     // Pega as posições e faz algo com elas:
+     for (int i = 0; i < order; i++)
+     {
+          input_file >> position;
+          input_file >> position;
+     }
+
+     // Pega o texto dos pesos:
+     input_file >> line;
+     // Pega os pesos e adiciona aos nós:
+     for (int i = 0; i < order; i++)
+     {
+          graph->insertNode(i);
+
+          input_file >> nodeWeight;
+          graph->getNode(i)->setNodeWeight(nodeWeight);
+     }
+
+     // Pega o texto das arestas:
+     input_file >> line;
+     // Pega as arestas e adiciona ao grafo:
+     for (int i = 0; i < order; i++)
+     {
+          for (int j = 0; j < order; j++)
+          {
+               input_file >> hasEdge;
+
+               // Não insere aresta de um nó para ele mesmo, nem multiarestas
+               if (i >= j)
+               {
+                    continue;
+               }
+
+               if (hasEdge == 1)
+               {
+                    graph->insertEdge(i, j, hasEdge);
+               }
+          }
+     }
+     return graph;
+}
+
+Graph *readFile(ifstream &input_file, int directed, int isEdgeWeighted, int isNodeWeighted)
+{
+     string firstLine;
+     Graph *g;
+     // le a primeira linha do arquivo
+     input_file >> firstLine;
+
+     // Se a primeira linha do arquivo for um numero, é o formato da parte 1
+     if (firstLine[0] >= '0' && firstLine[0] <= '9')
+     {
+          g = readFilePartOne(input_file, directed, isEdgeWeighted, isNodeWeighted, firstLine);
+     }
+     else
+     {
+          g = readFilePartTwo(input_file);
+     }
+
+     return g;
+}
+
 char menu()
 {
      char selection;
@@ -86,6 +173,9 @@ char menu()
      cout << "(B) - Grafo União" << endl;
      cout << "(C) - Grafo Diferença" << endl;
      cout << "(D) - Rede Pert" << endl;
+     cout << "(E) - Algoritmo Construtivo Guloso;" << endl;
+     cout << "(F) - Algoritmo Construtivo Guloso Randomizado e Adaptativo;" << endl;
+     cout << "(G) - Algoritmo Construtivo Guloso Randomizado Reativo." << endl;
 
      cout << "(P) - Imprimir a Lista" << endl;
      cout << "(x) - Sair" << endl;
@@ -96,8 +186,9 @@ char menu()
      return toupper(selection);
 }
 
-void selecionar(char selection, Graph *graphG1, ofstream &output_file, string input_file_name)
+void selecionar(char selection, Graph *graphG1, ofstream &output_file, string input_file_name, int seed)
 {
+     system("clear");
      int order = graphG1->getOrder();
      bool directed, weightedEdge, weightedNode;
      directed = graphG1->isDirected();
@@ -130,7 +221,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           // Cria um grafo com as mesmas especificações do G1
-          graphG2 = readFile(input_file, directed, weightedEdge, weightedNode);
+          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode, "");
 
           Graph *graphIntersection_ = new Graph(order, directed, weightedEdge, weightedNode);
 
@@ -167,7 +258,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           // Cria um grafo com as mesmas especificações do G1
-          graphG2 = readFile(input_file, directed, weightedEdge, weightedNode);
+          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode, "");
 
           Graph *graphUnion_ = new Graph(order, directed, weightedEdge, weightedNode);
 
@@ -205,7 +296,7 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           }
 
           // Cria um grafo com as mesmas especificações do G1
-          graphG2 = readFile(input_file, directed, weightedEdge, weightedNode);
+          graphG2 = readFilePartOne(input_file, directed, weightedEdge, weightedNode, "");
 
           Graph *graphDifference_ = new Graph(order, directed, weightedEdge, weightedNode);
 
@@ -243,6 +334,172 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
           cout << endl;
           break;
      }
+     case 'E': // Algoritmo Guloso
+     {
+          cout << "(E) - Algoritmo Construtivo Guloso" << endl;
+          Metrics p;
+          Setup_metrics(&p);
+          auto t0 = std::chrono::high_resolution_clock::now();
+
+          output_file << "\n-----\nAlgoritmo Construtivo Guloso\n---";
+          output_file << "\nArquivo: " << input_file_name << "\n";
+
+          // Executa algoritmo
+          vector<Node *> solution = beginGreedyAlgorithm(graphG1, output_file);
+
+          // Pega tamanho total:
+          int solutionSize = solution.size();
+          cout << "Tamanho da solução: " << solutionSize << endl;
+
+          // Pega peso total:
+          int solutionTotalWeight = findTotalWeight(solution);
+          cout << "Peso total da solução: " << solutionTotalWeight << endl;
+
+          // Teste de tempo
+          auto t1 = std::chrono::high_resolution_clock::now();
+          std::chrono::duration<double> delta = t1 - t0;
+
+          Set_CPUtime(&p, delta.count());
+          cout << "Duração da solução:" << endl;
+          Print_metrics(&p);
+          cout << endl;
+
+          output_file << "\nPeso total da solução: " << solutionTotalWeight;
+          output_file << "\nTempo total: " << p.time << "s\n-----\n";
+          break;
+     }
+     case 'F':
+     {
+          cout << "(F) - Algoritmo construtivo guloso randomizado e adaptativo" << endl;
+          Metrics p, p_global;
+          Setup_metrics(&p);
+          Setup_metrics(&p_global);
+
+          float alpha;
+          int iterNumber, bestSolutionSize, bestSolutionWeight;
+          std::chrono::duration<double> bestSolutionTime;
+
+          // Escolha do valor do alpha
+          cout << "Digite o valor do alfa a ser utilizado no algoritmo: ({0.05, 0.10, 0.15, 0.30, 0,50})" << endl;
+          cin >> alpha;
+          while (alpha > 1 || alpha <= 0)
+          // Alfa nunca pode ser maior que 1 ou menor 0 ou  0 pois
+          // ele pode (e muito provavel que deve) tentar acessar uma posição invalida do vetor!
+          {
+               cout << "Alfa invalido!" << endl;
+               cout << "Digite o valor do alfa a ser utilizado no algoritmo: ({0.05, 0.10, 0.15, 0.30, 0,50})" << endl;
+               cin >> alpha;
+          }
+
+          vector<Node *> vectorNode;
+
+          output_file << "\n-----\nAlgoritmo Construtivo Guloso Randomizado e Adaptativo\n---";
+          output_file << "\nArquivo: " << input_file_name;
+          output_file << "\nAlfa: " << alpha;
+
+          iterNumber = 500;
+          auto t0_global = std::chrono::high_resolution_clock::now();
+          for (int i = 0; i < iterNumber; i++)
+          {
+               auto t0 = std::chrono::high_resolution_clock::now();
+               vectorNode = beginRandomizedAdaptativeAlgorithm(graphG1, alpha);
+               // Teste de tempo
+               auto t1 = std::chrono::high_resolution_clock::now();
+               std::chrono::duration<double> delta = t1 - t0;
+
+               // Caso seja a primeira vez que o loop está rodando, ele vai setar a melhor solução como a primeira
+               if (i == 0)
+               {
+                    bestSolutionTime = delta;
+                    bestSolutionSize = vectorNode.size();
+                    bestSolutionWeight = findTotalWeight(vectorNode);
+               }
+               if (vectorNode.size() < bestSolutionSize) // Pega o menor tamanho de vetor
+               {
+                    bestSolutionWeight = findTotalWeight(vectorNode);
+                    bestSolutionSize = vectorNode.size();
+                    bestSolutionTime = delta;
+               }
+          }
+          auto t1_global = std::chrono::high_resolution_clock::now();
+          std::chrono::duration<double> delta_global = t1_global - t0_global;
+
+          output_file << "\nSolucao: ";
+          cout << "\nSolucao: " << endl;
+          for (size_t i = 0; i < vectorNode.size(); i++)
+          {
+               if (i % 20 == 0 && i >= 20)
+                    output_file << endl;
+               output_file << vectorNode[i]->getId() << " ";
+               cout << vectorNode[i]->getId() << " ";
+          }
+
+          Set_CPUtime(&p, bestSolutionTime.count());
+          Set_CPUtime(&p_global, delta_global.count());
+
+          output_file << "\nA solução tem " << bestSolutionSize << " vertices";
+          cout << "\nA solução tem " << bestSolutionSize << " vertices";
+
+          output_file << "\nPeso total da solução: " << bestSolutionWeight;
+          cout << "\nPeso total da solução: " << bestSolutionWeight;
+
+          output_file << "\nPerformace total: " << p_global.time << "s";
+          cout << "\nPerformace total: " << p_global.time << "s";
+
+          output_file << "\nPerformace: " << p.time << "s";
+          cout << "\nPerformace: " << p.time << "s";
+
+          output_file << "\nNumero de iteraçoes: " << iterNumber;
+          cout << "\nNumero de iteracoes: " << iterNumber;
+
+          output_file << "\nSemente de randomização: " << seed << endl;
+          cout << "\nSemente de randomização: " << seed << endl;
+          cout << endl;
+          break;
+     }
+     case 'G':
+     {
+          cout << "(G) - Algoritmo construtivo guloso randomizado reativo" << endl;
+          Metrics p;
+          Setup_metrics(&p);
+          int iterNumber = 2500;
+          int blockSize = 250;
+          int bestSolutionSize, bestSolutionWeight;
+          std::chrono::duration<double> bestSolutionTime;
+          vector<Node *> vectorNode;
+
+          output_file << "\n-----\nAlgoritmo construtivo guloso randomizado reativo.\n---";
+          output_file << "\nArquivo: " << input_file_name;
+
+          vectorNode = beginRandomizedReactiveAlgorithm(graphG1, blockSize, iterNumber, bestSolutionWeight, bestSolutionTime);
+          bestSolutionSize = vectorNode.size();
+          output_file << "\nSolucao: ";
+          cout << "\nSolucao: " << endl;
+          for (size_t i = 0; i < vectorNode.size(); i++)
+          {
+               if (i % 20 == 0 && i >= 20)
+                    output_file << endl;
+               output_file << vectorNode[i]->getId() << " ";
+               cout << vectorNode[i]->getId() << " ";
+          }
+
+          Set_CPUtime(&p, bestSolutionTime.count());
+
+          output_file << "\nA solução tem " << bestSolutionSize << " vertices";
+          cout << "\nA solução tem " << bestSolutionSize << " vertices";
+
+          output_file << "\nPeso total da solução: " << bestSolutionWeight;
+          cout << "\nPeso total da solução: " << bestSolutionWeight;
+
+          output_file << "\nPerformace: " << p.time << "s";
+          cout << "\nPerformace: " << p.time << "s";
+
+          output_file << "\nNumero de iteraçoes: " << iterNumber << endl;
+          cout << "\nNumero de iteracoes: " << iterNumber << endl;
+
+          cout << endl;
+          break;
+     }
      case 'P': // Imprimir o Grafo
      {
           cout << "(P) - Imprimir a Lista" << endl;
@@ -271,11 +528,11 @@ void selecionar(char selection, Graph *graphG1, ofstream &output_file, string in
      }
 }
 
-int mainMenu(ofstream &output_file, Graph *graph, string input_file_name)
+int mainMenu(ofstream &output_file, Graph *graph, string input_file_name, int seed)
 {
      // Verifica se as a pessoa digitou uma opção valida
      char selection = '1';
-     vector<char> selectionCheck = {'A', 'B', 'C', 'D', 'E', 'P', 'X'};
+     vector<char> selectionCheck = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'P', 'X'};
      auto it = find(selectionCheck.begin(), selectionCheck.end(), selection);
      do
      {
@@ -283,7 +540,7 @@ int mainMenu(ofstream &output_file, Graph *graph, string input_file_name)
           selection = menu();
           it = find(selectionCheck.begin(), selectionCheck.end(), selection);
           if (output_file.is_open())
-               selecionar(selection, graph, output_file, input_file_name);
+               selecionar(selection, graph, output_file, input_file_name, seed);
           else
                cout << "Erro no arquivo de salvamento!" << endl;
           output_file << endl;

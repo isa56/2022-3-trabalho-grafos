@@ -33,12 +33,12 @@ private:
      Node *firstNode;
      Node *lastNode;
 
-     void TopologicalSorting();
+     void TopologicalSorting(int &id_start, int &id_end);
      void MaximumPath(int id_start, int id_end);
      bool DFS(int V, vector<bool> &visited);
      int Dijkstra(int origin, int destiny);
      void TopologicalSortUtil(int v, bool visited[], queue<int> &Stack);
-     void MaximumPathUtil(int id_start, int id_end, bool visited[], int path[], int &path_index);
+     void MaximumPathUtil(int id_start, int id_end, bool visited[], int path[], int &path_index, float &maxPath);
 
 public:
      // Constructor & Destructor
@@ -54,7 +54,7 @@ public:
      Node *getFirstNode();
      Node *getLastNode();
      Node *getNode(int id);
-     Node *getNodePosition(int position); // Pega um node apartir de sua posição de inserção
+     Node *getNodeByPosition(int position); // Pega um node apartir de sua posição de inserção
 
      void insertNode(int id);
      void insertEdge(int id, int target_id, float weight);

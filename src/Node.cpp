@@ -12,6 +12,8 @@ Node::Node(int _id)
      this->inDegree = 0;
      this->outDegree = 0;
      this->id = _id;
+     this->ratio = 0;
+     this->visited = false;
 }
 
 // Gets
@@ -48,14 +50,25 @@ Node *Node::getNextNode()
 {
      return this->nextNode;
 }
-float Node::getNodeWeight()
+
+int Node::getNodeWeight()
 {
      return this->nodeWeight;
 }
 
+bool Node::isVisited()
+{
+     return this->visited;
+}
+
+float Node::getRatio()
+{
+     return this->ratio;
+}
+
 // sets
 
-void Node::setNodeWeight(float _nodeWeight)
+void Node::setNodeWeight(int _nodeWeight)
 {
      this->nodeWeight = _nodeWeight;
 }
@@ -96,23 +109,27 @@ void Node::decrementOutDegree()
      this->outDegree--;
 }
 // Adiciona uma nova aresta com peso
-void Node::addEdge(int _id, float _weightEdge)
+void Node::addEdge(int _destinyIid, float _weightEdge)
 {
      // Verifico se tem ao menos uma aresta no no
      if (this->firstEdge != nullptr)
      {
           // Add uma nova aresta(sem perder a referencia)
-          Edge *NewEdge = new Edge(_id);
-          NewEdge->setEdgeWeight(_weightEdge);
-          this->lastEdge->setNextEdge(NewEdge);
-          this->lastEdge = NewEdge;
+          Edge *newEdge = new Edge(_destinyIid);
+          newEdge->setEdgeWeight(_weightEdge);
+          newEdge->setOrigin(this->id);
+          newEdge->setDestiny(_destinyIid);
+          this->lastEdge->setNextEdge(newEdge);
+          this->lastEdge = newEdge;
      }
      else
      {
           // Add uma nova aresta caso ainda nao tenha
           // nenhuma aresta no No(sem perder a referencia)
-          this->firstEdge = new Edge(_id);
+          this->firstEdge = new Edge(_destinyIid);
           this->firstEdge->setEdgeWeight(_weightEdge);
+          firstEdge->setOrigin(this->id);
+          firstEdge->setDestiny(_destinyIid);
           this->lastEdge = this->firstEdge;
      }
 }
@@ -186,6 +203,21 @@ Edge *Node::searchEdge(int _id)
           } while (aux != nullptr); // Verifico se ela existe
      }
      return nullptr;
+}
+
+void Node::setRatio(float _ratio)
+{
+     this->ratio = _ratio;
+}
+
+void Node::setFirstEdge(Edge *firstEdge)
+{
+     this->firstEdge = firstEdge;
+}
+
+void Node::setVisited(bool _visited)
+{
+     this->visited = _visited;
 }
 
 // Destrutor

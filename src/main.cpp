@@ -9,9 +9,9 @@ using namespace std;
 int main(int argc, char const *argv[])
 {
   // Verificação se todos os parâmetros do programa foram entrados
-  if (argc != 6)
+  if (argc < 6)
   {
-    cout << "ERRO: Esperado: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> " << endl;
+    cout << "ERRO: Esperado: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> <seed>(opcional)" << endl;
     return 1;
   }
   // argv[0] -> Nome do Programa
@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
   // argv[3] -> Se o grafo é orientado (1) ou não (0)
   // argv[4] -> Se o grafo tem peso nas arestas"(1) ou não (0)
   // argv[5] -> Se o grafo tem peso nos vértices (1) ou não (0)
-
+  int seed;
   string program_name(argv[0]);
   string input_file_name(argv[1]);
   string output_file_name(argv[2]);
@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
   ifstream input_file;
   ofstream output_file;
   input_file.open(input_file_name, ios::in);
-  output_file.open(output_file_name, ios::out); //| ios::trun
+  output_file.open(output_file_name, ios::app); //| ios::trun
 
   if (!input_file.is_open())
   {
@@ -49,11 +49,23 @@ int main(int argc, char const *argv[])
     return -1;
   }
 
+  // Checa se a seed de randomização foi passada
+  if (argv[6] != NULL)
+  {
+    seed = atoi(argv[6]);
+    srand(seed);
+  }
+  else
+  {
+    seed = time(NULL);
+    srand(seed);
+  }
+
   Graph *graph;
 
   graph = readFile(input_file, atoi(isOriented.c_str()), atoi(isEdgeWeighted.c_str()), atoi(isNodeWeighted.c_str()));
 
-  mainMenu(output_file, graph, input_file_name);
+  mainMenu(output_file, graph, input_file_name, seed);
 
   // Fechando arquivo de entrada
   input_file.close();
@@ -74,7 +86,7 @@ int main(int argc, char const *argv[])
   // cout << "O grafo sera" << ((isOriented == "0") ? " não orientado\n" : " orientado\n");
   // cout << "O grafo sera com peso nas arestas? R: -> " << ((isEdgeWeighted == "0") ? " não!\n" : "sim!\n");
   // cout << "O grafo sera com peso nos vertices? R: -> " << ((isNodeWeighted == "0") ? " não!\n" : "sim!\n");
-  
+
   graph->~Graph();
   delete graph;
   return 0;
